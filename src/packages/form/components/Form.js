@@ -16,7 +16,7 @@ import {
   getObjPropValByPath 
 } from '@/utils/util';
 import Bus from '@/utils/bus';
-import FormItemTypeMap from '../mixins/FormItemTypeMap';
+import formItemTypeMap from '../mixins/formItemTypeMap';
 import StepForm from '../mixins/StepForm';
 import extendUITypes from '../utils/extendUITypes';
 
@@ -52,7 +52,7 @@ export default {
   name: 'LlForm',
   inheritAttrs: false,
   components: { Render },
-  mixins: [FormItemTypeMap, StepForm],
+  mixins: [formItemTypeMap, StepForm],
   props: {
     formItems: {
       type: Array,
@@ -458,7 +458,737 @@ export default {
 
       return sortedItems;
     },
-    
+    /**
+     * 收集包含副作用的字段的依赖图谱
+     * @param {String} prop 会产生副作用的字段属性名称
+     * @param {Array<String>} effect 被影响的字段
+     */
+    _collectEffect(prop, effect) {
+      this.effectMap[prop] = effect;
+    },
+    /**
+     * 提交表单
+     */
+    _handlerSubmit() {
+      this.validate(valid => {
+        if (!valid) {
+          this._expandAllCollapse(this.innerFormItems);
+          this.isSubmitButtonDisabled = true;
+          return;
+        }
+
+        this.submiting = true;
+
+        const {
+          innerFormData,
+          isEditMode,
+          unsubmitDisabledField,
+          unsubmitUnchangedField,
+          formItems,
+          initedFormData,
+          _deleteDisabledField,
+          _deleteUnChangedField,
+          _getHttpIns,
+          message,
+          postData,
+          http
+        } = this;
+        let formData = innerFormData;
+
+        if (isEditMode) {
+          formData = cloneDeep(formData);
+          // 忽略不可编辑字段的属性——值，不将其作为参数提交给接口
+          unsubmitDisabledField && (formData = _deleteDisabledField(formData, formItems));
+          // 忽略未更改字段的属性——值，不将其作为参数提交给接口
+          unsubmitUnchangedField && (formData = _deleteUnChangedField(formData, JSON.parse(initedFormData)));
+        }
+
+        // 用户配置了dataType属性，要求将表单绑定数据转换成formData
+        if (this.dataType === FORMDATA) {
+          formData = appendFormData(formData);
+        }
+
+        // 暴露submit事件，使得用户可以监听事件自定义提交逻辑
+        this.$emit('submit', formData);
+
+        if (isFunction(postData)) {
+          // 执行用户自定义的表单提交操作
+          postData(formData).finally(() => {
+            this.submiting = false;
+          });
+          return;
+        }
+
+        if (typeof postData === 'string') {
+          let httpIns = _getHttpIns(http);
+          httpIns
+            .post(postData, formData)
+            .then(res => {
+              const { msg, message: _messsage, result, code } = res || {};
+              if (code === 0 || result === 'success') {
+                this.$message.success((message && message.postSuccessed) || _message || msg || result || '表单数据提交成功');
+              } else {
+                this.$message.eror((message && message.postFailed) || _message || msg || result || '表单数据提交失败');
+              }
+            })
+            .catch(error => {
+              this.$message.eror((message && message.postFailed) || '表单数据提交失败');
+              console.error(`[ll-form][error]:表单数据提交失败，详情：${error}`);
+            })
+            .finally(() => {
+              this.submiting = false;
+            });
+        }
+      });
+    },
+    /**
+     * 字段不可编辑，且不是必填项且存在该字段则删除该字段
+     * @param {Object} formData 表单数据
+     * @param {Array<Object>} formItems 表单项配置
+     * @param {Array<String>} basePaths 辅助参数
+     * @return {Object} 过滤后的表单数据
+     */
+    _deleteDisabledField(formData, formItems, basePaths = []) {
+      const _formData = formData;
+      const formItemsLen = formItems.length;
+      const { _isRequiredField, _deleteDisabledField } = this;
+
+      formItems.forEach((item, index) => {
+        const { prop, formElementProps = {}, children, required = false } = item;
+        const propValue = _formData[prop];
+
+        // 是必填项，跳过比对
+        if (required || _isRequiredField(prop, basePaths, item)) return;
+
+        // 字段不可编辑，存在字段则删除该表单字段
+        if (formElementProps.disabled && propValue !== undefined) {
+          delete _formData[prop];
+          return;
+        }
+
+        if (children && isObject(propValue)) {
+          basePaths.push(prop); // 保存路径
+          _deleteDisabledField(propValue, children, basePaths);
+        }
+
+        // 当前子对象遍历完，将当前父路径出栈
+        if (index === formItemsLen - 1) {
+          basePaths.pop();
+        }
+      });
+
+      return _formData;
+    },
+    /**
+     * 属性非必填项时删除属性值未改变的字段
+     * @param {Object} formData 表单数据
+     * @param {Object} initedFormData 表单初始数据
+     * @param {Array<String>} basePaths 辅助参数
+     * @return {Object} 过滤后的表单数据
+     */
+     _deleteUnChangedField(formData, initedFormData, basePaths = []) {
+      const _formData = formData;
+      const props = Object.keys(_formData);
+      const propsLen = props.length;
+      const { _isRequiredField, _deleteUnChangedField } = this;
+
+      props.forEach((prop, index) => {        
+        // 是必填项，跳过比对
+        if (_isRequiredField(prop, basePaths)) return;
+
+        const currentValue = _formData[prop];
+        const oldValue = initedFormData[prop];
+
+        if (isObject(currentValue)) {
+          basePaths.push(prop); // 保存路径
+          _deleteUnChangedField(currentValue, oldValue, basePaths);
+        } else {
+          isValueEqual(currentValue, oldValue) && delete _formData[prop];
+        }
+
+        // 当前子对象遍历完，将当前父路径出栈
+        if (index === propsLen - 1) {
+          basePaths.pop();
+        }
+      });
+
+      return _formData;
+    },
+    /**
+     * 判断是不是必填项
+     * @param {String} prop 字段
+     * @param {Array<String>} basePaths 当前字段的父路径
+     * @param {Object} formItem 表单项配置对象
+     * @return {Boolean}
+     */
+    _isRequiredField(prop, basePaths, formItem) {
+      const formItemRules = getObjectPropVal(
+        this.$attrs.rules, // rules对象里面的key存在多层级时通过'.'连接，所以下面的第二个参数也需要用'.'连接
+        // 包含基础属性路径且当前属性值里面不包含'.'就将基础路径通过'.'连起来，再和最后一级属性通过'.'连接，组合形成对象的属性key
+        basePaths.length && !prop.includes('.') ? `${basePaths.join('.')}.${prop}` : prop
+      );
+
+      // 是否必填
+      if (formItemRules && formItemRules.some(rule => !!rule.required)) {
+        return true;
+      }
+
+      const _formItem = formItem || (getObjArrayItemByKeyValue(this.formItems, 'prop', prop) || {}).item;
+      // 判断表单项配置里面是否定义了必填
+      if (_formItem) {
+        return !!_formItem.required;
+      }
+
+      return false;
+    },
+    /**
+     * 重置表单
+     */
+    _handlerReset() {
+      this.clearValidate();
+      this.resetFields();
+    },
+    /**
+     * 获取http实例
+     * @param {Object|Function|String} http 用户传入的http实例
+     * @return {Function} http instance
+     */
+    _getHttpIns(http) {
+      const httpIns = http ? (isObject(http) || isFunction(http) ? http : this[http]) : this.$http;
+      if (!httpIns) {
+        throw new Error(`[ll-form][error]:获取HTTP实例失败，请通过组件'http'属性配置`);
+      }
+
+      if (!httpIns.get || !httpIns.post) {
+        throw new Error(`[ll-form][error]:HTTP实例失败必须包含'get'和'post'方法`);
+      }
+
+      return httpIns;
+    },
+    /**
+     * 计算表单元素的宽度
+     * @param {String|Number} width 表单元素宽度
+     * @param {String} defaultVal 默认宽度
+     * @return {String} 表单宽度
+     */
+    _calcFormElWidth(width, defaultVal) {
+      return width 
+        ? typeof width === 'number' ? `${width}px` : width
+        : this.isInline ? defaultVal || '' : this.innerWidth;
+    },
+    /**
+     * 展开所有表单项分组
+     * @param {Array<FormItem>} innerFormItems 表单项配置数组
+     * @param {Boolean} inited 是否是初始化表单
+     */
+    _expandAllCollapse(innerFormItems, inited = false) {
+      const activeCollapseMap = {};
+      const { _expandAllCollapse } = this;
+      innerFormItems.map(({ prop, expand = true, children = [] }) => {
+        if (children.length) {
+          activeCollapseMap[prop] = inited ? (expand ? [prop] : '') : [prop];
+          _expandAllCollapse(children, inited);
+        }
+      });
+
+      this.activeCollapseMap = { ...this.activeCollapseMap, ...activeCollapseMap };
+    },
+    /**
+     * 校验表单是否合法
+     */
+    _validate() {
+      const { submitButtonEnabled, isSubmitButtonDisabled, validate } = this;
+      // 开启了表单合法，提交按钮才可用开关后，表单内容变化时，校验表单是否合法，不合法提交按钮不可用
+      // 如果提交按钮不可用，也执行表单检查
+      (!submitButtonEnabled || isSubmitButtonDisabled) && validate(valid => { this.isSubmitButtonDisabled = !valid });
+    },
+    /**
+     * 保存表单初始数据
+     * @param {Object} formData 表单数据
+     */
+    _saveInitedFormData(formData) {
+      this.initedFormData = JSON.stringify(formData);
+    },
+    /**
+     * 生成默认操作按钮
+     */
+    _renderActionButton() {
+      const {
+        actionButtonLayout,
+        size,
+        submiting,
+        isSubmitButtonDisabled,
+        resetButtonAttrs,
+        resetButtonLabel,
+        submitButtonAttrs,
+        submitButtonLabel,
+        prevStepLabel,
+        nextStepLabel,
+        step,
+        buttonPosition,
+        innerActiveStep,
+        stepsConfig,
+        _handlerReset,
+        _handlerSubmit,
+        _handerStep
+      } = this;
+
+      // 判断是否显示操作按钮
+      if (!actionButtonLayout.trim()) {
+        return null;
+      }
+
+      let buttons = actionButtonLayout.split(',').map(b => b.trim());
+      const defaultButtonAttrs = { size };
+      const innerResetButtonAttrs = {
+        type: 'default',
+        ...defaultButtonAttrs,
+        ...(resetButtonAttrs || {})
+      };
+      const innerSubmitButtonAttrs = {
+        type: 'primary',
+        ...defaultButtonAttrs,
+        ...(submitButtonAttrs || {})
+      };
+      const btnMap = {
+        reset: (
+          <el-button onClick={_handlerReset} {...{ props: innerResetButtonAttrs }}>{resetButtonLabel}</el-button>
+        ),
+        submit: (
+          <el-button
+            onClick={_handlerSubmit}
+            loading={submiting}
+            {...{ props: { disabled: isSubmitButtonDisabled, ...innerSubmitButtonAttrs } }}
+          >
+            {submitButtonLabel}
+          </el-button>
+        ),
+        prevStep: (
+          <el-button
+            onClick={() => _handerStep(-1)}
+            {...{ 
+              props: innerSubmitButtonAttrs,
+              style: { display: innerActiveStep === 0 ? 'none' : 'inline-block' }
+            }}
+          >
+            {prevStepLabel}
+          </el-button>
+        ),
+        nextStep: (
+          <el-button
+            onClick={() => _handerStep(1)}
+            {...{ 
+              props: innerSubmitButtonAttrs,
+              style: { display: innerActiveStep === stepsConfig.length - 1 ? 'none' : 'inline-block' }
+            }}
+          >
+            {nextStepLabel}
+          </el-button>
+        )
+      };
+
+      // 分布表单必须有上一步和下一步按钮
+      if (step) {
+        !buttons.includes('prevStep') && buttons.unshift('prevStep');
+        !buttons.includes('nextStep') && buttons.unshift('nextStep');
+      } else {
+        // 不是分步表单，但填写了prevStep和nextStep按钮配置，则将其删除，只有分步表单才有该按钮
+        let index = -1;
+        index = buttons.indexOf('prevStep');
+        index !== -1 && buttons.splice(index, 1);
+        index = buttons.indexOf('nextStep');
+        index !== -1 && buttons.splice(index, 1);
+      }
+
+      return buttonPosition ? (
+        <el-col
+          style={{
+            textAlign: buttonPosition,
+            paddingLeft: buttonPosition === 'left' ? this.innerLabelWidth : ''
+          }}
+        >
+          {buttons.map(b => btnMap[b])}
+        </el-col>
+      ) : (
+        <el-col>
+          <el-form-item>{buttons.map(b => btnMap[b])}</el-form-item>
+        </el-col>
+      );
+    },
+    /**
+     * 生成表单项的原生事件绑定配置
+     * @param {Object} nativeOn 表单项配置的原生事件配置对象
+     * @returns {Object}
+     */
+    _genNativeOn(nativeOn = {}) {
+      const { nativeListener } = this;
+      let realNativeOn = { ...nativeListener, ...nativeOn };
+
+      // 用户设置了keyup监听
+      if (nativeOn.keyup) {
+        const originKeyup = nativeOn.keyup;
+        const defaultKeyup = nativeListener.keyup;
+        realNativeOn.keyup = function (e) {
+          originKeyup.call(null, e); // 执行用户自定义的keyup事件回调
+          defaultKeyup && defaultKeyup.call(null, e); // 执行表单组件默认的keyup事件回调
+        }
+      }
+
+      return realNativeOn;
+    },
+    /**
+     * 渲染表单项
+     * @param {Function} h createElement
+     * @param {Array<FormItem>} formItems 表单项配置
+     * @returns {Array<VM>}
+     */
+    _renderFormItems(h, formItems) {
+      const {
+        innerFormData,
+        formItemTypeMap,
+        fetchCache,
+        isViewMode,
+        size,
+        isInline,
+        tipsEffect,
+        clearable,
+        showLabel,
+        _renderStepForm,
+        _renderGroupFormItem,
+        _saveInitedFormData,
+        _genNativeOn
+      } = this;
+
+      return formItems.map((formItemConfig, index) => {
+        const {
+          type,
+          span,
+          render,
+          viewRender, // 自定义查看模式时表单项的值
+          labelRender,
+          tips,
+          fetchData,
+          fetchOptions,
+          formElementProps = {},
+          children,
+          display = true,
+          visiable = true,
+          effected = false,
+          showLabel: innerShowLabel,
+          // form-item的vue实例组件属性
+          class: domClass = '',
+          style,
+          attrs,
+          props,
+          domProps,
+          on,
+          nativeOn: formItemNativeOn,
+          key,
+          ref,
+          slot,
+          scopedSlots,
+          directives,
+          ...formItemProps // el-form-item的prop属性
+        } = formItemConfig;
+        const { prop } = formItemProps;
+
+        // 处理表单项的原生事件绑定
+        const nativeOnProxy = _genNativeOn(formElementProps.nativeOn);
+        // 判断表单是否全局设置了表单项内容可清除，设置了且表单项自己未设置clearable配置则继承全局配置
+        clearable && formElementProps.clearable === undefined && (formElementProps.clearable = true);
+        // 判断是否渲染表单项，display为true时渲染；
+        if (!(isFunction(display) ? display(innerFormData) : display)) {
+          return null;
+        }
+
+        const realShowLabel = innerShowLabel !== undefined ? innerShowLabel : showLabel;
+
+        if (type === 'group') {
+          if (isArray(children)) {
+            return _renderGroupFormItem(h, formItemConfig);
+          } else {
+            throw new TypeError(`[ll-form][error]:表单项type属性值为'group'时，必须包含'children'属性。`);
+          }
+        }
+
+        if (type === 'step') {
+          if (isArray(children)) {
+            return _renderStepForm(h, children, index);
+          } else {
+            throw new TypeError(`[ll-form][error]:表单项type属性值为'step'时，必须包含'children'属性。`);
+          }
+        }
+
+        const formInputerRender = type && formItemTypeMap[type];
+
+        if (type && !formInputerRender) {
+          throw new Error(`[ll-form][error]:不支持表单项类型'${type}'，检查你表单项配置的'type'类型配置。`);
+        }
+
+        if (fetchData) {
+          if (effected) {
+            fetchCache.valuePromiseRef[prop] = fetchData().then(res => {
+              this.$set(this.innerFormData, prop, res || '');
+              formItemConfig.effected = false;
+            });
+          } else {
+            !fetchCache.valuePromiseRef[prop] && (fetchCache.valuePromiseRef[prop] = fetchData().then(res => {
+              this.innerFormData[prop] = res;
+              _saveInitedFormData(innerFormData);
+            }));
+          }
+        }
+
+        if (fetchOptions) {
+          // 未设置options属性默认值，设置一个
+          !formElementProps.options && this.$set(formElementProps, 'ooptions', []);
+
+          // 该字段的可选值受到了其它字段的影响
+          if (effected) {
+            this.$set(this.innerFormData, prop, '');
+            fetchCache.optionsPromiseRef[prop] = fetchOptions().then(res => {
+              formItemConfig.formElementProps.options = res;
+              formItemConfig.effected = false;
+            });
+          } else {
+            !fetchCache.optionsPromiseRef[prop] && (fetchCache.optionsPromiseRef[prop] = fetchOptions().then(res => {
+              formItemConfig.formElementProps.options = res;
+            }));
+          }
+        }
+
+        let formItemClass = Array.isArray(domClass) ? domClass : [domClass];
+        formItemClass.push(`ll-form-item-${prop}`);
+
+        const componentOptions = {
+          props: { ...props, ...formItemProps },
+          domProps,
+          class: formItemClass,
+          style,
+          attrs,
+          on,
+          nativeOn: formItemNativeOn,
+          key,
+          ref,
+          slot,
+          scopedSlots,
+          directives
+        };
+
+        // 是否渲染并隐藏表单项
+        if (!(isFunction(visiable) ? visiable(innerFormData) : visiable)) {
+          componentOptions.class = [...formItemClass, 'll-form__hidden'];
+          formElementProps.disabled = true;
+        }
+
+        if (labelRender) {
+          componentOptions.scopedSlots = { label: labelRender };
+        }
+
+        let template = null;
+
+        // 查看模式
+        if (viewMode) {
+          template = (
+            <el-form-item
+              {...{
+                props: {
+                  label: `${formItemProps.label}:`
+                },
+                class: formItemClass,
+                style
+              }}
+            >
+              {viewRender ? (
+                <Render render={viewRender}></Render>
+              ) : (
+                (getObjPropValByPath(innerFormData, prop) || '').toString()
+              )}
+            </el-form-item>
+          );
+        } else {
+          template = render 
+            ? (
+              <Render render={render} {...{ props: { nativeOn: nativeOnProxy } }}></Render>
+            )
+            : isFunction(formInputerRender)
+              ? (
+                formInputerRender(h, {
+                  prop,
+                  size,
+                  nativeOn: nativeOnProxy,
+                  formElementProps, // 表单配置项对象，全部配置信息，select远程搜索时会使用
+                  ...formElementProps
+                })
+              )
+              : null;
+        
+          // 需要展示气泡提示
+          if (tips) {
+            template = (
+              <el-tooltip content={tips} effect={tipsEffect} placement="top-start">
+                {template}
+              </el-tooltip>
+            );
+          }
+
+          // 需要展示表单项label
+          if (realShowLabel) {
+            template = <el-form-item {...componentOptions}>{template}</el-form-item>;
+          } else if (!showLabel) {
+            template = <div class="ll-form__no-label">{template}</div>;
+          }
+        }
+
+        return isInline
+          ? template
+          : (
+            <el-col span={span || 24} class={visiable ? '' : 'll-form__hidden'}>
+              {template}
+            </el-col>
+          );
+      });
+    },
+    /**
+     * 渲染表单项分组
+     * @param {Function} h createElement
+     * @param {FormItem} formItem 表单项配置 { prop, label, children }
+     * @returns {jsx}
+     */
+    _renderGroupFormItem(h, formItem) {
+      const { prop, label, children, indent } = formItem;
+      const groupLevel = prop.split('.').length - 1;
+      const { indent: _commonIndent, gutter, activeCollapseMap, _renderFormItems } = this;
+
+      return (
+        <el-row
+          class="ll-form__clear-both"
+          style={{ paddingLeft: `${parseInt(indent) || _commonIndent * groupLevel}px` }}
+          gutter={gutter}
+        >
+          <el-collpase vModel={activeCollapseMap[prop]}>
+            <el-collpase-item title={label} name={prop}>
+              {_renderFormItems(h, children)}
+            </el-collpase-item>
+          </el-collpase>
+        </el-row>
+      );
+    },
+    /**
+     * 注册表单项ui类型
+     * @param {String} uiType 自定义的ui类型
+     * @param {(h, attrs) => JSX} render ui类型对应的实现函数
+     */
+    _addUIType(uiType, render) {
+      const { formItemTypeMap,_genNativeOn, genComponentConfig } = this;
+      // 避免重复注册
+      if (!formItemTypeMap[uiType]) {
+        formItemTypeMap[uiType] = (h, attrs) => {
+          const { nativeOn = {} } = attrs;
+          const componentConfig = genComponentConfig(attrs);
+          const realNativeOn = _genNativeOn(nativeOn);
+
+          return render(h, { ...componentConfig, nativeOn: realNativeOn });
+        }
+      }
+    }
   },
-  render() {}
+  render(h) {
+    const {
+      step,
+      stepsPosition,
+      className,
+      isShowOperate,
+      innerLabelWidth,
+      innerFormData,
+      innerFormItems,
+      isViewMode,
+      layouts,
+      gutter,
+      nativeOn,
+      $scopedSlots,
+      $slots,
+      $attrs,
+      $listeners,
+      validate,
+      _handlerReset,
+      _handlerSubmit,
+      _renderActionButton,
+      _renderFormItems,
+      _renderSteps
+    } = this;
+
+    const layoutMap = {
+      operate: isShowOperate 
+        ? (
+          <el-row class={'ll-form__operate'} gutter={gutter}>
+            {this.isShowCustomOperate
+              ? (
+                <el-col>{$scopedSlots.operate({
+                  formData: innerFormData,
+                  resetForm: _handlerReset,
+                  submitForm: _handlerSubmit,
+                  validateForm: validate
+                })}</el-col>
+              )
+              : _renderActionButton()
+            }
+          </el-row>
+        )
+        : null,
+      form: (
+        <el-row class={'ll-form__content'} gutter={gutter}>
+          {_renderFormItems(h, innerFormItems)}
+          {/* 渲染通过vue模板定义的表单项 */}
+          {<template slot="default">{$slots.default}</template>}
+        </el-row>
+      )
+    };
+
+    const formTemplate = (
+      <el-form
+        ref="ll-form"
+        class={['ll-form', isViewMode ? 'll-form__view' : `ll-form__${this.mode}`, className]}
+        {...{
+          props: {
+            size: this.size,
+            labelWidth: innerLabelWidth,
+            ...$attrs,
+            disabled: isViewMode || $attrs.disabled
+          },
+          on: { ...$listeners },
+          nativeOn
+        }}
+      >
+        {layouts.map(mdl = layoutMap[mdl])}
+      </el-form>
+    );
+
+    if (step) {
+      if (stepsPosition === 'top') {
+        return (
+          <div>
+            {_renderSteps()}
+            {formTemplate}
+          </div>
+        );
+      } else {
+        // left
+        let { stepsWidth, stepsHeight } = this;
+        stepsWidth = isTypeOf(stepsWidth, 'number') ? `${stepsWidth}px` : stepsWidth;
+        stepsHeight = isTypeOf(stepsHeight, 'number') ? `${stepsHeight}px` : stepsHeight;
+
+        return (
+          <div style={{ display: 'flex' }}>
+            <div {...{ style: { flexBasis: stepsWidth, height: stepsHeight } }}>
+              {_renderSteps()}
+            </div>
+            <div {...{ style: {  flexGrow: 2 } }}></div>
+          </div>
+        );
+      }
+    }
+
+    return formTemplate;
+  }
 };
