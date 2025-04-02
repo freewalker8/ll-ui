@@ -16,9 +16,9 @@ import {
   getObjPropValByPath
 } from '@/utils/util';
 import Bus from '@/utils/bus';
-import formItemTypeMap from '../mixins/FormItemTypeMap';
+import FormItemTypeMap from '../mixins/FormItemTypeMap';
 import StepForm from '../mixins/StepForm';
-import extendUITypes from '../utils/extendUITypes';
+import extendUITypeMap from '../utils/extendUITypeMap';
 
 import '../style/index.scss';
 
@@ -52,7 +52,7 @@ export default {
   name: 'LlForm',
   inheritAttrs: false,
   components: { Render },
-  mixins: [formItemTypeMap, StepForm],
+  mixins: [FormItemTypeMap, StepForm],
   props: {
     formItems: {
       type: Array,
@@ -195,7 +195,7 @@ export default {
         valuePromiseRef: {}, // 用于判断是否获取过表单项绑定数据
         optionsPromiseRef: {} // 用于判断是否获取过表单项选项数据
       },
-      extendUITypes,
+      extendUITypeMap,
       activeCollapseMap: {}, // 保存表单项分组展开状态
       flattenedFormItems: [], // 保存展平后的表单项配置对象信息
       isSubmitButtonDisabled: !this.submitButtonEnabled, // 表单验证是否通过标志
@@ -279,15 +279,15 @@ export default {
       }
     },
     // 监听注册UI类型
-    extendUITypes: {
+    extendUITypeMap: {
       deep: true,
       immediate: true,
-      handler(uiTypes = []) {
+      handler(uiTypes = {}) {
         const { _addUIType } = this;
-        uiTypes.forEach(uiType => {
+        for (const uiType in uiTypes) {
           const render = uiTypes[uiType];
           _addUIType(uiType, render);
-        });
+        }
       }
     },
     // 监听表单内容变更，进行校验

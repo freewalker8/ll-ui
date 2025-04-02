@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import LlForm from './components/Form';
-import extendUITypes from './utils/extendUITypes';
+import extendUITypeMap from './utils/extendUITypeMap';
 
 LlForm.install = function(Vue) {
   Vue.component(LlForm.name, LlForm);
@@ -51,8 +51,8 @@ const UITypes = [
  * @param {Function} render UI类型实现，渲染函数
  */
 const addUIType = (uiType, render) => {
-  if (!extendUITypes[uiType]) {
-    extendUITypes[uiType] = render;
+  if (!extendUITypeMap[uiType]) {
+    extendUITypeMap[uiType] = render;
     UITypes.push(uiType);
   } else {
     console.warn(`[ll-form]:表单类型${uiType}已经存在`);
