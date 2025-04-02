@@ -1158,7 +1158,7 @@ export default {
         <el-row class={'ll-form__content'} gutter={gutter}>
           {_renderFormItems(h, innerFormItems)}
           {/* 渲染通过vue模板定义的表单项 */}
-          {<template slot='default'>{$slots.default}</template>}
+          {$slots.default}
         </el-row>
       )
     };
