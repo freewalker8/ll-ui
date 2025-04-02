@@ -1,22 +1,22 @@
 import cloneDeep from 'lodash-es/cloneDeep';
 import Render from '@/utils/render';
-import { 
-  delegate, 
-  appendFormData, 
-  isTypeOf, 
-  isFunction, 
-  isObject, 
-  isArray, 
+import {
+  delegate,
+  appendFormData,
+  isTypeOf,
+  isFunction,
+  isObject,
+  isArray,
   isValueEqual,
-  flattenFormItems, 
-  sortObjectArrayByProp, 
-  debounce, 
-  getObjectPropVal, 
-  getObjArrayItemByKeyValue, 
-  getObjPropValByPath 
+  flattenFormItems,
+  sortObjectArrayByProp,
+  debounce,
+  getObjectPropVal,
+  getObjArrayItemByKeyValue,
+  getObjPropValByPath
 } from '@/utils/util';
 import Bus from '@/utils/bus';
-import formItemTypeMap from '../mixins/formItemTypeMap';
+import formItemTypeMap from '../mixins/FormItemTypeMap';
 import StepForm from '../mixins/StepForm';
 import extendUITypes from '../utils/extendUITypes';
 
@@ -38,11 +38,11 @@ export function filterUseableFormItem(formItem) {
   return formItem && Object.keys(formItem).length > 0;
 }
 
-window.llFormSetValue = function (value) {
+window.llFormSetValue = function(value) {
   const inputId = window.sessionStorage.getItem('ll-form-opener-input-id');
   const el = document.getElementById(inputId);
   el && (el.value = value);
-  Bus.$emit(UPDATE_OPENER_INPUT_EVENT, { value, prop: inputId.split('__')[1]});
+  Bus.$emit(UPDATE_OPENER_INPUT_EVENT, { value, prop: inputId.split('__')[1] });
   // 关闭弹框
   let { LlFormOpenedWindow } = window;
   LlFormOpenedWindow && LlFormOpenedWindow.close();
@@ -144,7 +144,12 @@ export default {
     // 文本字符的宽度，该属性只在isViewMode = true（表单查看模式）时有用
     labelCharWidth: { type: Number, default: 15 },
     // 绑定本地原生事件
-    nativeOn: { type: Object, default() { return {} } },
+    nativeOn: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     // 表单进行分组时，分组的缩进距离，默认40px
     indent: { type: Number, default: 40 },
     // 控制表单项之间的间距，el-row的gutter属性
@@ -178,7 +183,7 @@ export default {
     // 重置按钮属性配置对象
     resetButtonAttrs: Object
   },
- 
+
   data() {
     return {
       submiting: false,
@@ -224,23 +229,28 @@ export default {
     },
     innerLabelWidth() {
       const { labelWidth, isViewMode, innerFormItems, labelCharWidth } = this;
-      return labelWidth || (isViewMode 
-        // + labelCharWidth是因为自动添加了'：'，所以需要计算上它的宽度
-          ? Math.max(...innerFormItems.map(item => (item.label || item.prop || '').length * labelCharWidth + labelCharWidth)) + 'px'
-          : null
-        );
+      return (
+        labelWidth ||
+        (isViewMode
+          ? // + labelCharWidth是因为自动添加了'：'，所以需要计算上它的宽度
+            Math.max(
+              ...innerFormItems.map(
+                item => (item.label || item.prop || '').length * labelCharWidth + labelCharWidth
+              )
+            ) + 'px'
+          : null)
+      );
     },
     nativeListener() {
       const { enterSubmit, _handlerSubmit } = this;
       const nativeOn = {};
       // 开启回车提交功能，监听回车键，触发提交表单
-      enterSubmit && (
-        nativeOn.keyup = e => {
+      enterSubmit &&
+        (nativeOn.keyup = e => {
           const { keyCode, target, ctrlKey } = e;
           // 按下回车键且不是textarea输入框时提交表单，或者是textarea输入框且同时按下了Ctrl+enter时提交表单
           keyCode === 13 && (ctrlKey || target.nodeName !== 'TEXTAREA') && _handlerSubmit();
-        }
-      );
+        });
       return nativeOn;
     }
   },
@@ -254,7 +264,7 @@ export default {
         this.$nextTick(() => {
           this.innerFormItems = this._getSortedFormItems(items);
           this._expandAllCollapse(items);
-        })
+        });
       }
     },
     loading(val) {
@@ -374,7 +384,7 @@ export default {
      * 获取表单里所有上传组件的引用
      * @returns {ELUploadRefs}
      */
-    getFormRef() {
+    getUploadRefs() {
       const { $refs, flattenedFormItems } = this;
       const refs = [];
       flattenedFormItems.forEach(({ type, prop }) => {
@@ -401,7 +411,7 @@ export default {
     },
     /**
      * 收集通过formItems定义的和el-form-item定义的表单项，检查是否设置了prop属性
-     * @param {FormItem[] } formItems 
+     * @param {FormItem[] } formItems
      */
     _checkFormItemProp(formItems) {
       let baseOrder = 100000;
@@ -412,26 +422,30 @@ export default {
       );
 
       // 展平表单配置项
-      const allFormItems = flattenFormItems([...formItems, ...templateFormItems]).filter(filterUseableFormItem);
+      const allFormItems = flattenFormItems([...formItems, ...templateFormItems]).filter(
+        filterUseableFormItem
+      );
 
       this.flattenedFormItems = allFormItems; // 保存展平后的配置项
-      
-      const allFormItemsProps = allFormItems.map(item => {
-        const { prop, type, effect, render } = item;
-        effect && this._collectEffect(prop, effect);
 
-        // 未配置render属性 && 检查表单项是否都配置了prop属性（分组表单和分步表单项配置可以不填写prop）
-        if (!render && type && !prop && !['group', 'step'].includes(type)) {
-          throw new Error(`[ll-form][error]:表单项必须配置prop属性，配置项信息：${item}`);
-        }
+      const allFormItemsProps = allFormItems
+        .map(item => {
+          const { prop, type, effect, render } = item;
+          effect && this._collectEffect(prop, effect);
 
-        // 没配置order属性，加上默认的order
-        if (item.order === undefined) {
-          item.order = baseOrder++;
-        }
+          // 未配置render属性 && 检查表单项是否都配置了prop属性（分组表单和分步表单项配置可以不填写prop）
+          if (!render && type && !prop && !['group', 'step'].includes(type)) {
+            throw new Error(`[ll-form][error]:表单项必须配置prop属性，配置项信息：${item}`);
+          }
 
-        return prop || '';
-      }).filter(prop => !!prop); // 过滤掉无效属性
+          // 没配置order属性，加上默认的order
+          if (item.order === undefined) {
+            item.order = baseOrder++;
+          }
+
+          return prop || '';
+        })
+        .filter(prop => !!prop); // 过滤掉无效属性
 
       // 检查表单项prop属性值是否重复
       allFormItemsProps.forEach((prop, index) => {
@@ -524,11 +538,15 @@ export default {
           httpIns
             .post(postData, formData)
             .then(res => {
-              const { msg, message: _messsage, result, code } = res || {};
+              const { msg, message: _message, result, code } = res || {};
               if (code === 0 || result === 'success') {
-                this.$message.success((message && message.postSuccessed) || _message || msg || result || '表单数据提交成功');
+                this.$message.success(
+                  (message && message.postSuccessed) || _message || msg || result || '表单数据提交成功'
+                );
               } else {
-                this.$message.eror((message && message.postFailed) || _message || msg || result || '表单数据提交失败');
+                this.$message.eror(
+                  (message && message.postFailed) || _message || msg || result || '表单数据提交失败'
+                );
               }
             })
             .catch(error => {
@@ -586,13 +604,13 @@ export default {
      * @param {Array<String>} basePaths 辅助参数
      * @return {Object} 过滤后的表单数据
      */
-     _deleteUnChangedField(formData, initedFormData, basePaths = []) {
+    _deleteUnChangedField(formData, initedFormData, basePaths = []) {
       const _formData = formData;
       const props = Object.keys(_formData);
       const propsLen = props.length;
       const { _isRequiredField, _deleteUnChangedField } = this;
 
-      props.forEach((prop, index) => {        
+      props.forEach((prop, index) => {
         // 是必填项，跳过比对
         if (_isRequiredField(prop, basePaths)) return;
 
@@ -672,9 +690,13 @@ export default {
      * @return {String} 表单宽度
      */
     _calcFormElWidth(width, defaultVal) {
-      return width 
-        ? typeof width === 'number' ? `${width}px` : width
-        : this.isInline ? defaultVal || '' : this.innerWidth;
+      return width
+        ? typeof width === 'number'
+          ? `${width}px`
+          : width
+        : this.isInline
+        ? defaultVal || ''
+        : this.innerWidth;
     },
     /**
      * 展开所有表单项分组
@@ -700,7 +722,10 @@ export default {
       const { submitButtonEnabled, isSubmitButtonDisabled, validate } = this;
       // 开启了表单合法，提交按钮才可用开关后，表单内容变化时，校验表单是否合法，不合法提交按钮不可用
       // 如果提交按钮不可用，也执行表单检查
-      (!submitButtonEnabled || isSubmitButtonDisabled) && validate(valid => { this.isSubmitButtonDisabled = !valid });
+      (!submitButtonEnabled || isSubmitButtonDisabled) &&
+        validate(valid => {
+          this.isSubmitButtonDisabled = !valid;
+        });
     },
     /**
      * 保存表单初始数据
@@ -752,36 +777,35 @@ export default {
       };
       const btnMap = {
         reset: (
-          <el-button onClick={_handlerReset} {...{ props: innerResetButtonAttrs }}>{resetButtonLabel}</el-button>
+          <el-button onClick={_handlerReset} {...{ props: innerResetButtonAttrs }}>
+            {resetButtonLabel}
+          </el-button>
         ),
         submit: (
           <el-button
             onClick={_handlerSubmit}
             loading={submiting}
-            {...{ props: { disabled: isSubmitButtonDisabled, ...innerSubmitButtonAttrs } }}
-          >
+            {...{ props: { disabled: isSubmitButtonDisabled, ...innerSubmitButtonAttrs } }}>
             {submitButtonLabel}
           </el-button>
         ),
         prevStep: (
           <el-button
             onClick={() => _handerStep(-1)}
-            {...{ 
+            {...{
               props: innerSubmitButtonAttrs,
               style: { display: innerActiveStep === 0 ? 'none' : 'inline-block' }
-            }}
-          >
+            }}>
             {prevStepLabel}
           </el-button>
         ),
         nextStep: (
           <el-button
             onClick={() => _handerStep(1)}
-            {...{ 
+            {...{
               props: innerSubmitButtonAttrs,
               style: { display: innerActiveStep === stepsConfig.length - 1 ? 'none' : 'inline-block' }
-            }}
-          >
+            }}>
             {nextStepLabel}
           </el-button>
         )
@@ -805,8 +829,7 @@ export default {
           style={{
             textAlign: buttonPosition,
             paddingLeft: buttonPosition === 'left' ? this.innerLabelWidth : ''
-          }}
-        >
+          }}>
           {buttons.map(b => btnMap[b])}
         </el-col>
       ) : (
@@ -828,10 +851,10 @@ export default {
       if (nativeOn.keyup) {
         const originKeyup = nativeOn.keyup;
         const defaultKeyup = nativeListener.keyup;
-        realNativeOn.keyup = function (e) {
+        realNativeOn.keyup = function(e) {
           originKeyup.call(null, e); // 执行用户自定义的keyup事件回调
           defaultKeyup && defaultKeyup.call(null, e); // 执行表单组件默认的keyup事件回调
-        }
+        };
       }
 
       return realNativeOn;
@@ -932,10 +955,11 @@ export default {
               formItemConfig.effected = false;
             });
           } else {
-            !fetchCache.valuePromiseRef[prop] && (fetchCache.valuePromiseRef[prop] = fetchData().then(res => {
-              this.innerFormData[prop] = res;
-              _saveInitedFormData(innerFormData);
-            }));
+            !fetchCache.valuePromiseRef[prop] &&
+              (fetchCache.valuePromiseRef[prop] = fetchData().then(res => {
+                this.innerFormData[prop] = res;
+                _saveInitedFormData(innerFormData);
+              }));
           }
         }
 
@@ -951,9 +975,10 @@ export default {
               formItemConfig.effected = false;
             });
           } else {
-            !fetchCache.optionsPromiseRef[prop] && (fetchCache.optionsPromiseRef[prop] = fetchOptions().then(res => {
-              formItemConfig.formElementProps.options = res;
-            }));
+            !fetchCache.optionsPromiseRef[prop] &&
+              (fetchCache.optionsPromiseRef[prop] = fetchOptions().then(res => {
+                formItemConfig.formElementProps.options = res;
+              }));
           }
         }
 
@@ -988,7 +1013,7 @@ export default {
         let template = null;
 
         // 查看模式
-        if (viewMode) {
+        if (isViewMode) {
           template = (
             <el-form-item
               {...{
@@ -997,8 +1022,7 @@ export default {
                 },
                 class: formItemClass,
                 style
-              }}
-            >
+              }}>
               {viewRender ? (
                 <Render render={viewRender}></Render>
               ) : (
@@ -1007,26 +1031,22 @@ export default {
             </el-form-item>
           );
         } else {
-          template = render 
-            ? (
-              <Render render={render} {...{ props: { nativeOn: nativeOnProxy } }}></Render>
-            )
-            : isFunction(formInputerRender)
-              ? (
-                formInputerRender(h, {
-                  prop,
-                  size,
-                  nativeOn: nativeOnProxy,
-                  formElementProps, // 表单配置项对象，全部配置信息，select远程搜索时会使用
-                  ...formElementProps
-                })
-              )
-              : null;
-        
+          template = render ? (
+            <Render render={render} {...{ props: { nativeOn: nativeOnProxy } }}></Render>
+          ) : isFunction(formInputerRender) ? (
+            formInputerRender(h, {
+              prop,
+              size,
+              nativeOn: nativeOnProxy,
+              formElementProps, // 表单配置项对象，全部配置信息，select远程搜索时会使用
+              ...formElementProps
+            })
+          ) : null;
+
           // 需要展示气泡提示
           if (tips) {
             template = (
-              <el-tooltip content={tips} effect={tipsEffect} placement="top-start">
+              <el-tooltip content={tips} effect={tipsEffect} placement='top-start'>
                 {template}
               </el-tooltip>
             );
@@ -1036,17 +1056,17 @@ export default {
           if (realShowLabel) {
             template = <el-form-item {...componentOptions}>{template}</el-form-item>;
           } else if (!showLabel) {
-            template = <div class="ll-form__no-label">{template}</div>;
+            template = <div class='ll-form__no-label'>{template}</div>;
           }
         }
 
-        return isInline
-          ? template
-          : (
-            <el-col span={span || 24} class={visiable ? '' : 'll-form__hidden'}>
-              {template}
-            </el-col>
-          );
+        return isInline ? (
+          template
+        ) : (
+          <el-col span={span || 24} class={visiable ? '' : 'll-form__hidden'}>
+            {template}
+          </el-col>
+        );
       });
     },
     /**
@@ -1062,10 +1082,9 @@ export default {
 
       return (
         <el-row
-          class="ll-form__clear-both"
+          class='ll-form__clear-both'
           style={{ paddingLeft: `${parseInt(indent) || _commonIndent * groupLevel}px` }}
-          gutter={gutter}
-        >
+          gutter={gutter}>
           <el-collpase vModel={activeCollapseMap[prop]}>
             <el-collpase-item title={label} name={prop}>
               {_renderFormItems(h, children)}
@@ -1080,7 +1099,7 @@ export default {
      * @param {(h, attrs) => JSX} render ui类型对应的实现函数
      */
     _addUIType(uiType, render) {
-      const { formItemTypeMap,_genNativeOn, genComponentConfig } = this;
+      const { formItemTypeMap, _genNativeOn, genComponentConfig } = this;
       // 避免重复注册
       if (!formItemTypeMap[uiType]) {
         formItemTypeMap[uiType] = (h, attrs) => {
@@ -1089,7 +1108,7 @@ export default {
           const realNativeOn = _genNativeOn(nativeOn);
 
           return render(h, { ...componentConfig, nativeOn: realNativeOn });
-        }
+        };
       }
     }
   },
@@ -1119,35 +1138,34 @@ export default {
     } = this;
 
     const layoutMap = {
-      operate: isShowOperate 
-        ? (
-          <el-row class={'ll-form__operate'} gutter={gutter}>
-            {this.isShowCustomOperate
-              ? (
-                <el-col>{$scopedSlots.operate({
-                  formData: innerFormData,
-                  resetForm: _handlerReset,
-                  submitForm: _handlerSubmit,
-                  validateForm: validate
-                })}</el-col>
-              )
-              : _renderActionButton()
-            }
-          </el-row>
-        )
-        : null,
+      operate: isShowOperate ? (
+        <el-row class={'ll-form__operate'} gutter={gutter}>
+          {this.isShowCustomOperate ? (
+            <el-col>
+              {$scopedSlots.operate({
+                formData: innerFormData,
+                resetForm: _handlerReset,
+                submitForm: _handlerSubmit,
+                validateForm: validate
+              })}
+            </el-col>
+          ) : (
+            _renderActionButton()
+          )}
+        </el-row>
+      ) : null,
       form: (
         <el-row class={'ll-form__content'} gutter={gutter}>
           {_renderFormItems(h, innerFormItems)}
           {/* 渲染通过vue模板定义的表单项 */}
-          {<template slot="default">{$slots.default}</template>}
+          {<template slot='default'>{$slots.default}</template>}
         </el-row>
       )
     };
 
     const formTemplate = (
       <el-form
-        ref="ll-form"
+        ref='ll-form'
         class={['ll-form', isViewMode ? 'll-form__view' : `ll-form__${this.mode}`, className]}
         {...{
           props: {
@@ -1158,9 +1176,8 @@ export default {
           },
           on: { ...$listeners },
           nativeOn
-        }}
-      >
-        {layouts.map(mdl = layoutMap[mdl])}
+        }}>
+        {layouts.map(mdl => layoutMap[mdl])}
       </el-form>
     );
 
@@ -1180,10 +1197,8 @@ export default {
 
         return (
           <div style={{ display: 'flex' }}>
-            <div {...{ style: { flexBasis: stepsWidth, height: stepsHeight } }}>
-              {_renderSteps()}
-            </div>
-            <div {...{ style: {  flexGrow: 2 } }}></div>
+            <div {...{ style: { flexBasis: stepsWidth, height: stepsHeight } }}>{_renderSteps()}</div>
+            <div {...{ style: { flexGrow: 2 } }}></div>
           </div>
         );
       }
