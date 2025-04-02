@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div class="nav">
-      <span><router-link :to="{ path: '/form-demo' }">基础示例</router-link></span>
-      <span><router-link :to="{ path: '/custom-operate-button-demo' }">自定义表单操作按钮</router-link></span>
-      <span><router-link :to="{ path: '/dynamic-form-demo' }">动态增减表单项示例</router-link></span>
+      <span><router-link :to="{ path: '/form/demo' }">基础示例</router-link></span>
+      <span><router-link :to="{ path: '/form/custom-operate-button' }">自定义表单操作按钮</router-link></span>
+      <span><router-link :to="{ path: '/form/dynamic-form' }">动态增减表单项示例</router-link></span>
     </div>
     <div>
       <router-view></router-view>
@@ -12,14 +12,14 @@
 </template>
 
 <script>
-export default {
-  name: 'App',
-  data() {
-    return {
-      loading: false,      
-    };
-  }
-};
+  export default {
+    name: 'App',
+    data() {
+      return {
+        loading: false
+      };
+    }
+  };
 </script>
 
 <style lang="scss">
