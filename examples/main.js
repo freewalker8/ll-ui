@@ -16,8 +16,7 @@ import {
   addUIType,
   addUITypes,
   UITypes,
-  registerValidateType,
-  rule_strong
+  registerValidateType
 } from '../src/packages/index';
 
 import 'normalize.css';
@@ -28,7 +27,8 @@ Vue.use(LlForm);
 Vue.component('custom-input', CustomInput);
 Vue.config.productionTip = false;
 
-registerValidateType('strong', rule_strong, '只能输入中文、英文、数字、下划线');
+const reg_rule_strong = /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/;
+registerValidateType('strong', reg_rule_strong, '只能输入中文、英文、数字、下划线');
 
 addUIType('customInput', (h, dataObj) => <custom-input {...dataObj} />);
 
