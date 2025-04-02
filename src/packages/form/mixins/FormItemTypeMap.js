@@ -1,7 +1,7 @@
-import { getObjPropValByPath, setObjPropValByPath, isTypeOf } from "@/utils/util";
+import { getObjPropValByPath, setObjPropValByPath, isTypeOf } from '@/utils/util';
 import Upload from '@/packages/form/components/upload';
 
-window.LlFormOpenedWindow = null; // 存储dialog类型打开的弹窗的引用
+window.llFormOpenedWindow = null; // 存储dialog类型打开的弹窗的引用
 
 export default {
   components: { Upload },
@@ -50,9 +50,9 @@ export default {
                   childrenOptionsKey = key;
                   flag = true;
                 }
-              })
+              });
               return flag;
-            })
+            });
           }
 
           if (remote && remoteMethod) {
@@ -68,7 +68,7 @@ export default {
                 this.$nextTick(() => {
                   multiple
                     ? selectRef.$refs.input && (selectRef.$refs.input.value = query)
-                    : selectRef.$refs.reference && (selectRef.$refs.reference.$refs.input.value = query)
+                    : selectRef.$refs.reference && (selectRef.$refs.reference.$refs.input.value = query);
                 });
 
                 remoteMethod(q)
@@ -91,7 +91,7 @@ export default {
                   })
                   .finally(() => {
                     formElementProps.loading = false;
-                  })
+                  });
               }, 10);
             };
             componentConfig.props.remoteMethod = remoteMethodHandler;
@@ -105,12 +105,12 @@ export default {
                 isGroupSelect && Array.isArray(opt[childrenOptionsKey]) ? (
                   <el-option-group key={opt.label} label={opt.label}>
                     {opt[childrenOptionsKey].map(subOpt => (
-                      <el-option key={subOpt.value} {...{attrs: subOpt}}></el-option>
+                      <el-option key={subOpt.value} {...{ attrs: subOpt }}></el-option>
                     ))}
                   </el-option-group>
                 ) : (
                   <el-option key={opt.value} {...{ attrs: opt }}></el-option>
-                )
+                );
               })}
             </el-select>
           );
@@ -273,19 +273,22 @@ export default {
           const value = this.getFormItemValByPath(prop);
           const componentConfig = genComponentConfig(attrs);
 
-          return <upload {...{
-            ...componentConfig,
-            props: {
-              attrs,
-              value,
-              calcFormElWidth: this._calcFormElWidth
-            },
-            on: {
-              input: val => {
-                this.setFormItemValByPath(prop, val);
-              }
-            }
-          }}></upload>;
+          return (
+            <upload
+              {...{
+                ...componentConfig,
+                props: {
+                  attrs,
+                  value,
+                  calcFormElWidth: this._calcFormElWidth
+                },
+                on: {
+                  input: val => {
+                    this.setFormItemValByPath(prop, val);
+                  }
+                }
+              }}></upload>
+          );
         },
         rate: (h, attrs) => {
           const componentConfig = genComponentConfig(attrs);
@@ -301,15 +304,7 @@ export default {
         },
         // 弹框类型，将外部输入控件作为表单项输入控件
         dialog: (h, attrs) => {
-          const {
-            prop,
-            url,
-            dialogWidth,
-            dialogHeight,
-            top = null,
-            left = null,
-            nativeOn = {}
-          } = attrs;
+          const { prop, url, dialogWidth, dialogHeight, top = null, left = null, nativeOn = {} } = attrs;
           // 计算弹框距离屏幕左边的距离
           const _left = left || (window.innerWidth - Number(dialogWidth)) / 2;
           const _top = top || (window.innerHeight - Number(dialogHeight)) / 2;
@@ -317,40 +312,41 @@ export default {
           const _dialogHeight = dialogHeight || 350;
           const windowId = `ll-form-opener-input__${prop}`;
           const componentConfig = genComponentConfig(attrs);
-        
-          return <el-input
-            id={windowId}
-            {...{
-              ...componentConfig,
-              nativeOn: {
-                ...nativeOn,
-                click: () => {
-                  // 表单项被禁用
-                  if (this.$attrs.disabled) return;
 
-                  const { sessionStorage, open } = window;
-                  sessionStorage.setItem('ll-form-opener-input-id', windowId);
-                  window.LlFormOpenedWindow = open(
-                    url,
-                    windowId,
-                    `width=${_dialogWidth},height=${_dialogHeight},top=${_top},left=${_left},toolbar=no,menubar=no,location=no,status=no`
-                  );
-                  // 加载蒙层，使表单无法编辑
-                  this.dialogLoadingRef = this.$loading({ background: 'rgba(0, 0, 0, 0)'});
-                  // 关闭弹框回调
-                  window.LlFormOpenedWindow.onbeforeunload = () => {
-                    this.dialogLoadingRef.close();
-                    window.LlFormOpenedWindow.onbeforeunload = null;
-                    window.LlFormOpenedWindow = null;
-                    this.dialogLoadingRef = null;
+          return (
+            <el-input
+              id={windowId}
+              {...{
+                ...componentConfig,
+                nativeOn: {
+                  ...nativeOn,
+                  click: () => {
+                    // 表单项被禁用
+                    if (this.$attrs.disabled) return;
+
+                    const { sessionStorage, open } = window;
+                    sessionStorage.setItem('ll-form-opener-input-id', windowId);
+                    window.llFormOpenedWindow = open(
+                      url,
+                      windowId,
+                      `width=${_dialogWidth},height=${_dialogHeight},top=${_top},left=${_left},toolbar=no,menubar=no,location=no,status=no`
+                    );
+                    // 加载蒙层，使表单无法编辑
+                    this.dialogLoadingRef = this.$loading({ background: 'rgba(0, 0, 0, 0)' });
+                    // 关闭弹框回调
+                    window.llFormOpenedWindow.onbeforeunload = () => {
+                      this.dialogLoadingRef.close();
+                      window.llFormOpenedWindow.onbeforeunload = null;
+                      window.llFormOpenedWindow = null;
+                      this.dialogLoadingRef = null;
+                    };
                   }
                 }
-              }
-            }}
-          ></el-input>;
-        },
+              }}></el-input>
+          );
+        }
       }
-    }
+    };
   },
   methods: {
     genComponentConfig(options) {
@@ -377,10 +373,7 @@ export default {
         attrs: { ...attrs, ...inputerProps },
         props: { ...props, ...inputerProps, value: this.getFormItemValByPath(prop) },
         domProps,
-        style: [
-          { width: this._calcFormElWidth(width) },
-          ...(Array.isArray(style) ? style : [style])
-        ],
+        style: [{ width: this._calcFormElWidth(width) }, ...(Array.isArray(style) ? style : [style])],
         class: domClass,
         on: {
           ...on,

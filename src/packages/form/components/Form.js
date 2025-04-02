@@ -44,8 +44,8 @@ window.llFormSetValue = function(value) {
   el && (el.value = value);
   Bus.$emit(UPDATE_OPENER_INPUT_EVENT, { value, prop: inputId.split('__')[1] });
   // 关闭弹框
-  let { LlFormOpenedWindow } = window;
-  LlFormOpenedWindow && LlFormOpenedWindow.close();
+  let { llFormOpenedWindow } = window;
+  llFormOpenedWindow && llFormOpenedWindow.close();
 };
 
 export default {
