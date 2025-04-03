@@ -32,7 +32,7 @@ if (isUmd) {
   entry = resolve('../src/packages/index.umd.js');
   externals = {
     vue: 'Vue',
-    axios: 'axios',
+    axios: 'axios'
   };
 }
 
@@ -48,13 +48,14 @@ module.exports = {
     libraryTarget: TARGET,
     filename,
     path: resolve('../dist'),
-    umdNamedDefines: isUmd,
+    umdNamedDefines: isUmd
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     modules: ['node_modules'],
     alias: {
       '@': resolve('src'),
+      'll-ui': resolve('src'),
       utils: resolve('src/utils')
     }
   },
@@ -101,15 +102,15 @@ module.exports = {
           name: path.posix.join('static', '[name].[ext]')
         }
       }
-    ],
+    ]
   },
   plugins: [
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
-      _VERSION_: JSON.stringify(pkg.version),
+      _VERSION_: JSON.stringify(pkg.version)
     }),
     new LodashModuleReplacementPlugin({
-      paths: true,
+      paths: true
     }),
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
