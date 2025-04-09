@@ -8,7 +8,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const TARGET = process.env.TARGET || 'commonjs2';
 const isUmd = TARGET === 'umd';
 
-const pkg = require('./package.json');
+const pkg = require('../package.json');
 let reportFilename = resolve('../report.html');
 let filename = 'll.common.js';
 let entry = resolve('../src/packages/index.js');
@@ -49,15 +49,15 @@ module.exports = {
     library: 'll-ui',
     libraryTarget: TARGET,
     filename,
-    path: resolve('../dist'),
-    umdNamedDefines: isUmd
+    path: resolve('../dist')
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     modules: ['node_modules'],
     alias: {
       '@': resolve('src'),
-      'll-ui': resolve('src'),
+      'll-ui': resolve('src/packages'),
+      packages: resolve('src/packages'),
       utils: resolve('src/utils')
     }
   },
@@ -98,10 +98,12 @@ module.exports = {
       },
       {
         test: /\.(svg|otf|ttf|woff2?|eot|git|png|jpe?g)(\?\S*)?$/,
-        use: ['url-loader'],
-        query: {
-          limit: 10000,
-          name: path.posix.join('static', '[name].[ext]')
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            name: path.posix.join('static', '[name].[ext]')
+          }
         }
       }
     ]

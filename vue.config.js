@@ -38,18 +38,6 @@ module.exports = {
         utils: resolve('src/utils')
       }
     },
-    externals: isProd
-      ? [
-          {
-            axios: {
-              commonjs: 'axios',
-              commonjs2: 'axios',
-              amd: 'axios',
-              root: 'Axios'
-            }
-          }
-        ]
-      : [],
     module: {
       noParse: [/^lodash$/],
       rules: [

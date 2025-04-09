@@ -10,7 +10,7 @@
     "lint": "vue-cli-service lint",
     "fix": "vue-cli-service lint --fix",
     "clean": "rimraf dist && rimraf **/*.tgz",
-    "pack": "npm run clean && npm run build:umd && npm run build:commonjs && npm pack"
+    "pack": "npm run clean && npm run build:commonjs && npm run build:umd && npm pack"
   },
   "dependencies": {
     "core-js": "^3.6.5",
