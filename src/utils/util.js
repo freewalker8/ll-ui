@@ -2,12 +2,12 @@ import secRandom from './secRandom';
 
 /**
  * 获取变量类型
- * @param {any} obj 
+ * @param {any} obj
  * @returns {String} 变量类型
  */
 export const getType = function(obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
-}
+};
 
 /**
  * 判断变量是否为指定的类型
@@ -67,7 +67,7 @@ export const isUniqueArrayItemEqual = (srcArr, tagArr) => {
   if (srcArr.length !== tagArr.length) return false;
 
   return srcArr.every(item => tagArr.includes(item));
-}
+};
 
 /**
  * 判断一个值是否是有意义的，即不是undefined和null
@@ -76,11 +76,11 @@ export const isUniqueArrayItemEqual = (srcArr, tagArr) => {
  */
 export const isValidVal = val => {
   return val !== undefined && val !== null;
-}
+};
 
 /**
  * 检查对象是否拥有特定的键
- * 
+ *
  * @param {Object} obj - 要检查的对象
  * @param {string} key - 要检查的键名
  * @returns {boolean} - 如果对象拥有该键，则返回true；否则返回false
@@ -98,7 +98,7 @@ export const sleep = delay => {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve();
-    })
+    });
   }, delay);
 };
 
@@ -112,9 +112,7 @@ export const strToCamelCase = str => {
     throw new TypeError('Expected a string');
   }
 
-  return str
-    .toLowerCase()
-    .replace(/[^a-z0-9]+(.)/g, (match, chr) => chr.toUpperCase());
+  return str.toLowerCase().replace(/[^a-z0-9]+(.)/g, (match, chr) => chr.toUpperCase());
 };
 
 /**
@@ -144,7 +142,7 @@ export const objPropToCamelCase = (obj, replace = false) => {
   }
 
   return result;
-}
+};
 
 /**
  * 获取对象的属性值
@@ -167,33 +165,33 @@ export const getObjectPropVal = (obj, path) => {
 };
 
 /**
-* 根据属性名称和属性值查找对象数组里面对应的对象并返回
-* @param {Array<Object>} data 对象数组，搜索源
-* @param {String | Array | Function} key 属性名称
-* @param {String | Number} val 属性值
-* @param {String | Array} childrenkey 可选参数对象的子节点厉性名称
-* @param {Boolean} deepSearch 是否进行深度搜索，即搜索子节点
-* @returns {Object<(item, idx: index, index>} 返回搜索结果
-*/
- export const getObjArrayItemByKeyValue = (data, key, val, childrenKey ='children', deepSearch = true) => {
+ * 根据属性名称和属性值查找对象数组里面对应的对象并返回
+ * @param {Array<Object>} data 对象数组，搜索源
+ * @param {String | Array | Function} key 属性名称
+ * @param {String | Number} val 属性值
+ * @param {String | Array} childrenkey 可选参数对象的子节点厉性名称
+ * @param {Boolean} deepSearch 是否进行深度搜索，即搜索子节点
+ * @returns {Object<(item, idx: index, index>} 返回搜索结果
+ */
+export const getObjArrayItemByKeyValue = (data, key, val, childrenKey = 'children', deepSearch = true) => {
   let result = '';
   const childrenKeyArr = Array.isArray(childrenKey) ? childrenKey : [childrenKey];
-  for ( const idx in data ) {
+  for (const idx in data) {
     const item = data[idx];
     if (result) return result;
     const searchVal = getObjectPropVal(item, key);
     if (searchVal && searchVal.toString() === val.toString()) {
       const index = parseInt(idx);
-      result ={
+      result = {
         item,
         idx: index,
-        index 
+        index
       };
 
-      return result ;
+      return result;
     } else if (deepSearch) {
-      for ( const chdKey of childrenKeyArr ){
-        if ( item[chdKey]) {
+      for (const chdKey of childrenKeyArr) {
+        if (item[chdKey]) {
           result = getObjArrayItemByKeyValue(item[chdKey], key, val, childrenKeyArr, deepSearch);
         }
       }
@@ -206,7 +204,7 @@ export const getObjectPropVal = (obj, path) => {
  * 展平表单配置项
  * @param {Array<Object} arr 待展平的对象数组
  * @param {String} childrenKey  数组元素的孩子节点的key值
- * @param {Array<Object} flatenedArr? 可选参数，展平后的数组 
+ * @param {Array<Object} flatenedArr? 可选参数，展平后的数组
  * @returns {Array<Object} 展平后的数组
  */
 export const flattenFormItems = (arr, childrenKey = 'children', flatenedArr = []) => {
@@ -217,7 +215,7 @@ export const flattenFormItems = (arr, childrenKey = 'children', flatenedArr = []
       Array.isArray(childArr) && flattenFormItems(childArr, childrenKey, _flattenedArr);
     }
     _flattenedArr.push(item);
-  })
+  });
 
   return _flattenedArr;
 };
@@ -225,12 +223,12 @@ export const flattenFormItems = (arr, childrenKey = 'children', flatenedArr = []
 /**
  * 根据属性路径设置对象的属性值
  * @param {Object} obj 检索对象
- * @param {String} path 检索路径，多层路径用'.'分割，如：a.b 
+ * @param {String} path 检索路径，多层路径用'.'分割，如：a.b
  * @param {any} val 值
  * @param {Object} $set vue的全局方法Vue.set
-*/
+ */
 
-export const setObjPropValByPath =(obj, path, val, $set) => {
+export const setObjPropValByPath = (obj, path, val, $set) => {
   const _obj = obj;
   let temp = obj;
   let value = '';
@@ -242,7 +240,7 @@ export const setObjPropValByPath =(obj, path, val, $set) => {
       value = temp[p] || '';
       const type = getType(value).toLowerCase();
       if (type === 'object') {
-          temp = value;
+        temp = value;
       } else if (type === 'array') {
         if (idx + 1 === propLen) {
           _setVal(temp, p, val);
@@ -258,7 +256,7 @@ export const setObjPropValByPath =(obj, path, val, $set) => {
   _setVal(_obj, path, val); // path 只有一层
 
   function _setVal(obj, prop, val) {
-    const _obj = obj ;
+    const _obj = obj;
     // $set使属性成为可响应式，可被追踪
     $set ? $set(_obj, prop, val) : (_obj[prop] = val);
   }
@@ -267,11 +265,11 @@ export const setObjPropValByPath =(obj, path, val, $set) => {
 /**
  * 根据属性路径获取对象的属性值
  * @param {Object} obj 检索对象
- * @param {String} path 检索路径，多层路径用'.'分割，如：a.b 
- * @param {Boolean} initUndefined 不存在该属性时是否初始化该属性，默认为false 
+ * @param {String} path 检索路径，多层路径用'.'分割，如：a.b
+ * @param {Boolean} initUndefined 不存在该属性时是否初始化该属性，默认为false
  * @returns {any} 返回检索路径对应的属性的值
-*/
- export const getObjPropValByPath =( obj , path , initUndefined = false )=>{
+ */
+export const getObjPropValByPath = (obj, path, initUndefined = false) => {
   let value = obj;
   const pathArr = path.split('.');
   const propLen = pathArr.length;
@@ -287,38 +285,35 @@ export const setObjPropValByPath =(obj, path, val, $set) => {
           value = subValue;
         }
       });
-    } catch ( error ){
+    } catch (error) {
       value = undefined;
     }
     return value;
-  };
+  }
 
-  return obj [ path ];// path 只有一层
- };
+  return obj[path]; // path 只有一层
+};
 
 /**
  * 防抖函数
  * @param {Function} fn 待执行的函数
  * @param {Number} delay 延迟执行时间，默认50ms
  * @returns {Function}
-*/
+ */
 export const debounce = (fn, delay = 50) => {
   let timerRef = null;
-  return function (...args) {
+  return function(...args) {
     timerRef && clearTimeout(timerRef);
-    timerRef = setTimeout(
-      () => {
-        fn.apply(this, args);
-      },
-      delay
-    );
+    timerRef = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
   };
 };
 
 /**
- * 过滤HTML tag 
+ * 过滤HTML tag
  * @param {String} str 待过滤的字符串
-*/
+ */
 export const xssFilter = str => str.replace(/<.+\/?>+(.*<\/.+>)?/gi, '');
 
 /**
@@ -326,7 +321,10 @@ export const xssFilter = str => str.replace(/<.+\/?>+(.*<\/.+>)?/gi, '');
  * @param {String} str 待过滤的字符串
  */
 export const sqlfilter = str =>
-  str.replace(/(select|delete).+from[\s\w=><>=<=!=]*|update.+set[\s\w=<>=<=!=]*|insert\s+into[\s\w=<>=<=!=]*|(drop|create|backup|alter|truncate)\s+\S*(database|table|sequence|index|view|function)[\s\w=><>=<=!=]*/gi, '');
+  str.replace(
+    /(select|delete).+from[\s\w=><>=<=!=]*|update.+set[\s\w=<>=<=!=]*|insert\s+into[\s\w=<>=<=!=]*|(drop|create|backup|alter|truncate)\s+\S*(database|table|sequence|index|view|function)[\s\w=><>=<=!=]*/gi,
+    ''
+  );
 
 /**
 将字符串转换成 json 或可执行的函数或返回字符串表示的变量的值
@@ -339,23 +337,24 @@ export const sqlfilter = str =>
  * deep : Boolean 用于是否进行遍历以便深度转换，默认不进行深度转换
  * @returns {any}
  */
- export const evil = (str, options = []) => {
-  const defaultOpts = { xss: true , sql: true, ignoreVariable: true, deep: false };
+export const evil = (str, options = []) => {
+  const defaultOpts = { xss: true, sql: true, ignoreVariable: true, deep: false };
   const realOptions = { ...defaultOpts, ...options };
   const { xss, sql, ignoreVariable, deep } = realOptions;
   // 非字符串、为空，原样返回
-  if (typeof str !==' string '|| !str ) {
-    return str ;
+  if (typeof str !== 'string' || !str) {
+    return str;
   }
   // str 为数字的字符串表示或数字，原样返回。如'123',123
   // 开启不转换变量（ ignoreVariable = true )，存在字符串表示的全局变量时，直接返回字符串
-  if (/^\ d +$/. test ( str )||( ignoreVariable && window [ str ]!== undefined )){
-    return str ;
+  if (/^\d+$/.test(str) || (ignoreVariable && window[str] !== undefined)) {
+    return str;
   }
-  let _str = str ;
+  let _str = str;
   try {
     xss && (_str = xssFilter(str));
     sql && (_str = xssFilter(str));
+    const Fn = Function;
     // str 为对象，如：{}, [], function() {}
     // 或者为Boolean值的字符串
     // 或者为当前环境下的变量关键字，会返回该变量，如：存在变量 a = 123, 则evil('a') || evil(a)会返回123
@@ -372,7 +371,7 @@ export const sqlfilter = str =>
     }
 
     return result;
-  } catch(err) {
+  } catch (err) {
     return _str; // 原样输出
   }
 
@@ -400,25 +399,22 @@ export const sqlfilter = str =>
  * @param {Boolean} primitiveArr2JsonStr optional 默认值true ，是否将由原始值（字符串、数字、Boolean）组成的数组转换成json字符串作为表单属性的值
  * @returns {FormData} 返回FormData实例
  * eg : appendFormData(data, ['prop', "parent.son', /extProfile.[\S]+.codeItemList/]);
-*/
+ */
 export const appendFormData = (data, excludes = [], primitiveArr2JsonStr = true) => {
   const formDataIns = new FormData();
   const needExclude = !!excludes.length;
   const regList = excludes.filter(ext => isTypeOf(ext, 'RegExp'));
-  const append = function (k, v) {
+  const append = function(k, v) {
     if (isValidVal(v)) {
       // 需要排除该属性
-      if (
-        needExclude &&
-        (excludes.includes(k) || (regList.length && regList.some(reg => reg.test(k))))
-      ) {
+      if (needExclude && (excludes.includes(k) || (regList.length && regList.some(reg => reg.test(k))))) {
         return;
       }
       formDataIns.append(k, v);
     }
   };
 
-  //遍历对象添加数据到formDataIns 
+  //遍历对象添加数据到formDataIns
   const addFormdata = (key, value) => {
     if (Array.isArray(value)) {
       // 判断是否将由原始值组成的数组转换成 json 字符串作为表单属性的值
@@ -433,14 +429,14 @@ export const appendFormData = (data, excludes = [], primitiveArr2JsonStr = true)
         });
       }
     } else if (isTypeOf(value, 'object')) {
-        Object.keys(value).forEach(sonKey => {
-          addFormdata(`${key}.${sonKey}`, value[sonKey]);
+      Object.keys(value).forEach(sonKey => {
+        addFormdata(`${key}.${sonKey}`, value[sonKey]);
       });
     } else {
       append(key, isTypeOf(value, 'null') ? '' : value); // value值为null时转换为空字符串存储，避免存'null'
     }
   };
-  
+
   Object.keys(data).forEach(key => {
     addFormdata(key, data[key]);
   });
@@ -485,10 +481,6 @@ export const uuid = function() {
 
   return rd;
 };
-
-
-
-
 
 /**
  * 对对象的属性进行代理

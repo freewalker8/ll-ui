@@ -1,11 +1,11 @@
-import { isObject } from 'll-ui/utils/util' 
+import { isObject } from 'll-ui/utils/util';
 import { debounce } from 'lodash-es';
 
 // 默认分页配置
 const DefaultPaginationProps = {
   pageSize: 10,
   pageSizes: [10, 15, 20, 30, 40, 50],
-  layout: 'slot, ->, total, sizes, prev, pager, next, jumper',
+  layout: 'slot, ->, total, sizes, prev, pager, next, jumper'
 };
 
 // 默认接口返回数据映射配置，映射接口返回的数据，使组件能正确获取数据
@@ -52,7 +52,7 @@ export const DefaultProps = {
   saveMessage: '编辑内容未保存', // 手动触发变更事件时，用户未保存数据时的提示信息
   dragSortModel: 'thead', // 可拖拽排序，thead：拖动表头排序，formItem：在列过滤器里面拖到item排序
   // 禁用水平滚动条，默认关闭；当开启时，表格内容超出容器宽度按表格列配置的displayWeight属性的权重隐藏部分列直到不出现滚动条，优先隐藏权重小的
-  disableHScroll: false,
+  disableHScroll: false
 };
 
 /**
@@ -62,8 +62,8 @@ export const DefaultProps = {
 const _setProps = (options = {}) => {
   const globalPropArr = Object.keys(options);
   globalPropArr.forEach(prop => {
-    if (prop in defaultProps) {
-      const oldPropVal = DefaultProps[prop]; 
+    if (prop in DefaultProps) {
+      const oldPropVal = DefaultProps[prop];
       const newPropVal = options[prop];
       // 可全局设置该属性 && 全局配置该属性
       if (oldPropVal !== undefined && newPropVal !== undefined) {
@@ -86,7 +86,7 @@ let timeout = new Date().getTime();
  * 设置全局配置
  * @param {Object} options 全局配置信息
  * @param {Boolean} debounce 是否防抖
- * @returns 
+ * @returns
  */
 export const setProps = (options, debounce = false) => {
   if (!options) {
@@ -120,6 +120,6 @@ export const setProps = (options, debounce = false) => {
   } else {
     _setProps(options);
   }
-}
+};
 
 export default DefaultProps;
