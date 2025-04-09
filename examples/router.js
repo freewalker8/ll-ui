@@ -9,11 +9,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import FormDemo from './demo/form/FormDemo.vue';
-import CustomOperateButtonDemo from './demo/form/CustomOperateButton.vue';
-import DynamicFormDemo from './demo/form/DynamicForm.vue';
-import TableStatic from './demo/table/TableStatic.vue';
-
 Vue.use(VueRouter);
 
 const routes = [
@@ -23,20 +18,24 @@ const routes = [
   },
   {
     path: '/form/demo',
-    component: FormDemo
+    component: () => import('./demo/form/FormDemo.vue')
+  },
+  {
+    path: '/form/simple-demo',
+    component: () => import('./demo/form/SimpleDemo.vue')
   },
   {
     path: '/form/custom-operate-button',
-    component: CustomOperateButtonDemo
+    component: () => import('./demo/form/CustomOperateButton.vue')
   },
   {
     path: '/form/dynamic-form',
-    component: DynamicFormDemo
+    component: () => import('./demo/form/DynamicForm.vue')
   },
   // 表格
   {
     path: '/table/table-static',
-    component: TableStatic
+    component: () => import('./demo/table/TableStatic.vue')
   }
 ];
 

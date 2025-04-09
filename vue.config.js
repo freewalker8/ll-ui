@@ -33,7 +33,7 @@ module.exports = {
     resolve: {
       alias: {
         '@': resolve('src'),
-        'll-ui': resolve('src'),
+        'll-ui': resolve('src/packages'),
         packages: resolve('src/packages'),
         utils: resolve('src/utils')
       }

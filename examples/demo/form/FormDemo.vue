@@ -7,7 +7,7 @@
       :form-items="formItems"
       :rules="rules"
       :model="formData"
-      :http-request="submitForm"
+      :post-data="submitForm"
       :unsubmit-unchanged-field="false"
       :unsubmit-disabled-field="true"
       :submit-button-enabled="false"
