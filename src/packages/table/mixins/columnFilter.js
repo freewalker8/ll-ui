@@ -1,3 +1,8 @@
+import { isUniqueArrayItemEqual } from 'll-ui/utils/util';
+import DefaultProps from '../config';
+
+let CHECKED_COLUMNS_BAK = [];
+
 export default {
   props: {
     // 是否可过滤列
@@ -7,15 +12,20 @@ export default {
     },
     // 选中的列，由column的prop属性组成
     columnFilterSelected: Array,
+    // 默认选中的列，不可取消
+    columnFilterAlwaysSelected: {
+      type: Array,
+      default: () => []
+    },
     // 过滤表单class
     columnFilterClass: {
       type: String,
-      default: 'wst-table__filterColumn'
+      default: 'll-table__filterColumn'
     },
     // 过滤表单宽度
     columnFilterWidth: {
       type: [String, Number],
-      default: 400
+      default: 440
     },
     // 每行显示的CheckBox数
     columnFilterRowNum: {
@@ -25,10 +35,10 @@ export default {
         return 24 % v === 0;
       }
     },
-    // 筛选表单操作按钮，支持四种操作，按钮会按照你输入的顺序进行排列
+    // 筛选表单操作按钮，支持三种操作，按钮会按照你输入的顺序进行排列
     columnFilterButtonLayout: {
       type: String,
-      default: 'cancel, all, reset' // 取消、全选、重置、确认
+      default: 'cancel, all, reset' // 取消、全选、重置
     },
     // 过滤表单取消按钮文本
     columnFilterCancelLabel: {
@@ -50,27 +60,55 @@ export default {
     // 最小展示列
     minColumnNum: {
       type: Number,
-      default: 1
+      default: 1,
+      validator(v) {
+        if (v < 1) {
+          console.error('[ll-table][error]:minColumnNum must be greater than 0');
+          return false;
+        }
+        return true;
+      }
     }
   },
   data() {
     return {
-      checkedColumns: [], // 存储过滤表单的选中值
-      filterColumnVisible: false
+      checkedColumns: [], // 存储过滤表单的选中值，起到缓存作用
+      checkedColumnsBak: [],
+      filterColumnVisible: false,
+      isFiltered: false
     };
   },
   computed: {
+    // 最小展示列数
+    innerMinColumnNum() {
+      const { minColumnNum, columnFilterAlwaysSelected } = this;
+      const columnFilterAlwaysSelectedLen = columnFilterAlwaysSelected.length;
+
+      return minColumnNum > columnFilterAlwaysSelectedLen
+        ? minColumnNum
+        : columnFilterAlwaysSelectedLen;
+    },
     // 计算最大展示列数
     innerMaxColumnNum() {
       return this.maxColumnNum || this.canFilterColumns.length;
     },
     // 计算字段所占宽度
     cellSpan() {
-      return 24 / this.columnFilterRowNum;
+      return 24 / (this.columnFilterRowNum || DefaultProps.columnFilterRowNum);
     },
     // 计算哪些列字段被选中
     defaultCheckedColumns() {
-      return this.columnFilterSelected || [...this.canFilterColumns.map(c => c.prop)];
+      const { columnFilterSelected = [], columnFilterAlwaysSelected, canFilterColumns } = this;
+
+      // 默认选中列的长度不为0，则选中设置的默认选中列；否则进行兜底，选中所有可过滤的列
+      const checkedColumns = columnFilterSelected.length
+        ? columnFilterSelected
+        : [...canFilterColumns.map(item => item.prop)];
+      const realCheckedColumns = [...checkedColumns, ...columnFilterAlwaysSelected].filter(
+        (prop, idx, arr) => !!prop && arr.indexOf(prop) === idx
+      );
+      
+      return realCheckedColumns;
     }
   },
   watch: {
@@ -88,32 +126,54 @@ export default {
         this.tableColumns = this.allColumns.filter(({ prop, type }) => {
           return checked.includes(prop) || !!type;
         });
-
-        // 对外暴露筛选事件
-        this.$emit('column-filter', checked);
       }
     }
   },
   methods: {
+    /**
+     * 渲染过滤器表单
+     * @returns 
+     */
     _renderFilterForm() {
-      return this.columnFilterable ? (
+      const {
+        columnFilterable,
+        columnFilterWidth,
+        columnFilterClass,
+        innerMaxColumnNum,
+        innerMinColumnNum,
+        cellSpan,
+        columnFilterAlwaysSelected
+      } = this;
+
+      return columnFilterable ? (
         <el-table-column
-          prop='wst-table-filter-column'
+          prop='ll-table-filter-column'
           align='center'
           width='40'
-          label-class-name='wst-table__filter-column'>
+          label-class-name='ll-table__filter-column'>
           <template slot='header'>
             <el-popover
               ref='filterColumnPopper'
               placement='left'
-              width={this.columnFilterWidth}
-              popperClass={this.columnFilterClass + 'wst-table__filter-column-warp'}
+              width={columnFilterWidth || DefaultProps.columnFilterWidth}
+              popperClass={columnFilterClass + 'll-table__filter-column-warp'}
               {...{
                 props: {
                   value: this.filterColumnVisible
                 },
                 on: {
                   input: val => {
+                    const { isFiltered, filterColumnVisible, checkedColumns } = this;
+                    // 发生了筛选操作 && 不是初始化 && 筛选内容有变化;则发送筛选完成事件
+                    if (
+                      isFiltered && 
+                      filterColumnVisible && 
+                      !val && 
+                      isUniqueArrayItemEqual(checkedColumns, CHECKED_COLUMNS_BAK)
+                    ) {
+                      this.$emit('column-filter-confirm', checkedColumns);
+                    }
+
                     this.filterColumnVisible = val;
                   }
                 }
@@ -126,11 +186,11 @@ export default {
                     callback: this._handleCheckboxChange
                   },
                   props: {
-                    min: this.minColumnNum,
-                    max: this.innerMaxColumnNum
+                    min: innerMinColumnNum,
+                    max: innerMaxColumnNum
                   },
                   directives: [
-                    this.dragSortModel === 'formItem'
+                    this._getDragMode() === 'formItem'
                       ? {
                           name: 'dragable',
                           value: {
@@ -145,12 +205,13 @@ export default {
                 <el-row>
                   {this.canFilterColumns.map(({ label, prop }, index) => {
                     return (
-                      <el-col span={this.cellSpan} class='wst-table__filter-column-cellbox'>
+                      <el-col span={cellSpan} title={label} class='ll-table__filter-column-cellbox'>
                         <el-checkbox
                           {...{
                             props: {
                               label: prop,
-                              key: prop
+                              key: prop,
+                              disabled: columnFilterAlwaysSelected.includes(prop)
                             }
                           }}>
                           {index + 1}.{label}
@@ -161,7 +222,7 @@ export default {
                 </el-row>
               </el-checkbox-group>
               {this._renderFilterButton()}
-              <i slot='reference' class='el-icon-setting wst-table__filter-column-icon'></i>
+              <i slot='reference' class='el-icon-setting ll-table__filter-column-icon'></i>
             </el-popover>
           </template>
         </el-table-column>
@@ -172,35 +233,47 @@ export default {
       const btnMap = {
         all: (
           <el-button type='primary' size='mini' onClick={this._handlerFilterAll}>
-            {this.columnFilterAllLabel}
+            {this.columnFilterAllLabel || DefaultProps.columnFilterAllLabel}
           </el-button>
         ),
         reset: (
           <el-button type='primary' size='mini' onClick={this._handlerFilterReset}>
-            {this.columnFilterResetLabel}
+            {this.columnFilterResetLabel || DefaultProps.columnFilterResetLabel}
           </el-button>
         ),
         cancel: (
           <el-button type='default' size='mini' onClick={this._handlerFilterCancel}>
-            {this.columnFilterCancelLabel}
+            {this.columnFilterCancelLabel || DefaultProps.columnFilterCancelLabel}
           </el-button>
         )
       };
 
-      let buttons = this.columnFilterButtonLayout.split(',').map(b => b.trim());
+      let buttons = (this.columnFilterButtonLayout || DefaultProps.columnFilterButtonLayout)
+        .split(',')
+        .map(b => b.trim());
 
       return (
         <el-row>
           <el-col span={24}>
-            <div class='wst-table__filter-column-button'>{buttons.map(b => btnMap[b])}</div>
+            <div class='ll-table__filter-column-button'>{buttons.map(b => btnMap[b])}</div>
           </el-col>
         </el-row>
       );
     },
     // 处理表单选中项的变化
     _handleCheckboxChange(val) {
+      this.isFiltered = true;
       this.columnCounter += val.length - this.checkedColumns.length;
-      this.checkedColumns = [...val];
+      this.checkedColumns = []; // clear
+      CHECKED_COLUMNS_BAK = val;
+
+      this.$nextTick(() => {
+        val.map((item, idx) => {
+          this.$set(this.checkedColumns, idx, item);
+        });
+
+        this.$emit('column-filter', this.checkedColumns); // 对我暴露筛选事件，每次筛选触发
+      });
     },
     // 关闭表单
     _handlerFilterCancel() {
@@ -208,7 +281,15 @@ export default {
     },
     // 重置为初始状态
     _handlerFilterReset() {
-      this._handleCheckboxChange(this.columnFilterSelected || this.canFilterColumns.map(c => c.prop));
+      const { columnFilterSelected = [] } = this;
+      const selectedColumnProps = columnFilterSelected.length
+        ? columnFilterSelected
+        : this.canFilterColumns.map(item => item.prop);
+      
+      this._handleCheckboxChange(selectedColumnProps);
+
+      // 对外暴露重置事件，用于用户用columnFilterSelected属性来自定义重置状态
+      this.$emit('column-reset', selectedColumnProps);
     },
     // 选中全部列，但选中的列数不能超过设置的最大显示列（maxColumnNum）
     _handlerFilterAll() {

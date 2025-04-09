@@ -1,7 +1,7 @@
 @import "~element-ui/packages/theme-chalk/src/common/var";
-$wst-table-hover-color: '#67C23A';
+$ll-table-hover-color: '#67C23A';
 
-.wst-table {
+.ll-table {
   display: flex;
   flex-direction: column;
   &::before, &::after {
@@ -92,7 +92,47 @@ $wst-table-hover-color: '#67C23A';
       cursor: move !important;
     }
     &--drop-over {
-      border: 1px dashed #{$wst-table-hover-color};
+      border: 1px dashed #{$ll-table-hover-color};
+    }
+  }
+
+  &__drag-row {
+    &--ghostClass {
+      opacity: 0.8;
+    }
+    &--chosen {
+      background-color: #f3efdf !important;
+    }
+  }
+
+  .el-input__suffix {
+    right: 0;
+    .el-button {
+      margin: 0;
+      border-radius: 0;
+    }
+    .el-button--default {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  // 表格内容上中下布局，中间内容区自适应撑开，上部工具栏和下部分页栏固定高度
+  &-tcd {
+    height: 100%;
+    .ll-table {
+      &__toolBar {
+        flex-shrink: 0;
+      }
+      &__table {
+        flex-grow: 2;
+        overflow-y: hidden;
+      }
+      &__pager, &__extra {
+        flex-shrink: 0;
+      }
+      &__body-wrapper {
+        height: auto !important;
+      }
     }
   }
 }

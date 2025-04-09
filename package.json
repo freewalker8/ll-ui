@@ -4,13 +4,18 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build:umd": "cross-env MODE=pkg TARGET=umd NODE_ENV=production webpack --config ./build/webpack.prod.js",
+    "build:commonjs": "cross-env MODE=pkg NODE_ENV=production webpack --config ./build/webpack.prod.js",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "fix": "vue-cli-service lint --fix",
+    "clean": "rimraf dist && rimraf **/*.tgz",
+    "pack": "npm run clean && npm run build:umd && npm run build:commonjs && npm pack"
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "lodash-es": "^4.17.15"
+    "lodash-es": "^4.17.15",
+    "sortablejs": "^1.10.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

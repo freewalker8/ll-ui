@@ -1,20 +1,24 @@
+import { setProps } from './config';
 import LlTable from './components/Table';
-import LlTableSync from './components/TableSync';
+import LlTableStatic from './components/TableStatic';
 
-LlTable.install = function(Vue) {
+LlTable.install = function(Vue, options) {
+  setProps(options, true);
   Vue.component(LlTable.name, LlTable);
 };
 
-LlTableSync.install = function(Vue) {
-  Vue.component(LlTableSync.name, LlTableSync);
+LlTableStatic.install = function(Vue, options) {
+  setProps(options, true);
+  Vue.component(LlTableStatic.name, LlTableStatic);
 };
 
-const install = function(Vue) {
-  LlTable.install(Vue);
-  LlTableSync.install(Vue);
+// 插件化注册
+const install = function(...args) {
+  LlTable.install(...args);
+  LlTableStatic.install(...args);
 };
 
-export { install, LlTable, LlTableSync };
+export { install, LlTable, LlTableStatic, setProps };
 
 export default {
   install

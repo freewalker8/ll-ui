@@ -2,7 +2,7 @@
  * @Author: lianglei stone.ll@qq.com
  * @Date: 2022-02-17 10:22:05
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-02 10:26:47
+ * @LastEditTime: 2025-04-09 11:03:41
  * @FilePath: \ll-ui\examples\main.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,7 +16,8 @@ import {
   addUIType,
   addUITypes,
   UITypes,
-  registerValidateType
+  registerValidateType,
+  useTable
 } from '../src/packages/index';
 
 import 'normalize.css';
@@ -24,6 +25,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.use(LlForm);
+Vue.use(useTable);
 Vue.component('custom-input', CustomInput);
 Vue.config.productionTip = false;
 

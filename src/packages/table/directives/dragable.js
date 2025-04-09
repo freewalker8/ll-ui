@@ -23,7 +23,7 @@ function listenToggle(el, value, isListen = true) {
   function _listen() {
     setTimeout(function() {
       const behavior = isListen ? 'addEventListener' : 'removeEventListener';
-      draggableDoms = el.querySelector(dragSelector);
+      draggableDoms = el.querySelectorAll(dragSelector);
 
       for (const dDom of draggableDoms) {
         // 排除不可拖动元素
@@ -37,7 +37,7 @@ function listenToggle(el, value, isListen = true) {
         }
 
         dDom.draggable = true;
-        dDom.className = dDom.className + ' wst-table__sort-column--dragable';
+        dDom.className = dDom.className + ' ll-table__sort-column--dragable';
         dDom[behavior]('dragstart', _handleDragStart);
         dDom[behavior]('dragover', _handleDragOver);
         dDom[behavior]('dragenter', _handleDragEnter);
@@ -67,14 +67,14 @@ function listenToggle(el, value, isListen = true) {
   function _handleDragEnter(event) {
     const target = event.target;
     if (target.draggable) {
-      target.className = target.className + ' wst-table__sort-column--drop-over';
+      target.className = target.className + ' ll-table__sort-column--drop-over';
     }
   }
 
   function _handleDragLeave(event) {
     const target = event.target;
     if (target.draggable) {
-      target.className = target.className.replace(' wst-table__sort-column--drop-over', '');
+      target.className = target.className.replace(' ll-table__sort-column--drop-over', '');
     }
   }
 
@@ -92,7 +92,7 @@ function listenToggle(el, value, isListen = true) {
       const targetIndex = _index(target);
       const draggedIndex = _index(dragged);
 
-      target.className = target.className.replace(' wst-table__sort-column--drop-over', '');
+      target.className = target.className.replace(' ll-table__sort-column--drop-over', '');
 
       dragged.style.opacity = '';
 

@@ -29,6 +29,10 @@ export const isArray = function(val) {
   return Array.isArray ? Array.isArray(val) : Object.prototype.toString.call(val) === '[object Array]';
 };
 
+export const isBoolean = function(val) {
+  return Object.prototype.toString.call(val) === '[object Boolean]';
+};
+
 /**
  * 深度判断两个变量是否相等,支持Array|Object|Number|String|Boolean
  * @param {Array|Object|Number|String|Boolean} a 判断因子a
@@ -54,12 +58,92 @@ export const isValueEqual = function(a, b) {
 };
 
 /**
+ * 判断两个数组是否由相同的项组成（忽略顺序）
+ * @param {Array<String|Number>} srcArr 比较数组1
+ * @param {Array<String|Number>} tagArr 比较数组2
+ * @returns {Boolean}
+ */
+export const isUniqueArrayItemEqual = (srcArr, tagArr) => {
+  if (srcArr.length !== tagArr.length) return false;
+
+  return srcArr.every(item => tagArr.includes(item));
+}
+
+/**
  * 判断一个值是否是有意义的，即不是undefined和null
  * @param {any} val 待判断的值
  * @returns {Boolean}
  */
 export const isValidVal = val => {
   return val !== undefined && val !== null;
+}
+
+/**
+ * 检查对象是否拥有特定的键
+ * 
+ * @param {Object} obj - 要检查的对象
+ * @param {string} key - 要检查的键名
+ * @returns {boolean} - 如果对象拥有该键，则返回true；否则返回false
+ */
+export function hasOwn(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+/**
+ * 睡眠
+ * @param {Number} delay 睡眠时间，单位ms
+ * @returns {Promise}
+ */
+export const sleep = delay => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    })
+  }, delay);
+};
+
+/**
+ * 将字符串转换为驼峰写法
+ * @param {String} str 字符串
+ * @returns {String} camelCase
+ */
+export const strToCamelCase = str => {
+  if (typeof str !== 'string') {
+    throw new TypeError('Expected a string');
+  }
+
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+(.)/g, (match, chr) => chr.toUpperCase());
+};
+
+/**
+ * 将对象的属性转换为驼峰写法
+ * @param {Object} obj 对象
+ * @param {Boolean} replace 是否是替换模式，默认值：false，为true时表示将原有属性转换为驼峰写法后删除原属性，反之保留原属性和新增的驼峰写法的属性
+ * @returns {Object} camelCase
+ */
+export const objPropToCamelCase = (obj, replace = false) => {
+  if (!isObject(obj)) {
+    throw new TypeError('Expected an object');
+  }
+
+  const result = replace ? obj : { ...obj };
+
+  for (const key in obj) {
+    if (hasOwn(obj, key)) {
+      const camelCaseKey = strToCamelCase(key);
+      if (camelCaseKey !== key) {
+        result[camelCaseKey] = obj[key];
+        // 替换模式，删除原来的属性
+        if (replace) {
+          delete result[key];
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -402,46 +486,9 @@ export const uuid = function() {
   return rd;
 };
 
-/**
- * 表格列字段转换
- * @param {Function} h createElement
- * @param {Object} params
- * @param {String} other
- */
-export const highLightTransfer = (h, params, other = '') => {
-  let value = other || params.row[params.column.property] || '';
-  let type = Object.prototype.toString.call(value);
-  let val = type === '[object Array]' ? value[0].ip : type === '[object Object]' ? value.ip : value;
-  let temp = val.toString().indexOf("<span style='color:red'>") > -1;
-
-  return h('span', temp ? { domProps: { innerHTML: val } } : [val]);
-};
-
-export const getRowIdentity = (row, rowKey) => {
-  if (typeof rowKey === 'string') {
-    if (rowKey.indexOf('.') < 0) {
-      return row[rowKey];
-    }
-
-    let key = rowKey.split('.');
-    let current = row;
-
-    for (let i = 0, len = key.length; i < len; i++) {
-      current = current[key[i]];
-    }
-
-    return current;
-  } else if (typeof rowKey === 'function') {
-    return rowKey.call(null, row);
-  }
-};
 
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
 
-export function hasOwn(obj, key) {
-  return hasOwnProperty.call(obj, key);
-}
 
 /**
  * 对对象的属性进行代理

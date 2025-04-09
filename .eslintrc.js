@@ -1,3 +1,11 @@
+/*
+ * @Author: lianglei stone.ll@qq.com
+ * @Date: 2022-02-17 10:22:05
+ * @LastEditors: lianglei stone.ll@qq.com
+ * @LastEditTime: 2025-04-09 10:56:09
+ * @FilePath: \ll-ui\.eslintrc.js
+ * @Description: eslist配置
+ */
 module.exports = {
   root: true,
 
@@ -13,7 +21,8 @@ module.exports = {
 
   rules: {
     "no-console": "off",
-    "no-debugger": process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    "no-debugger": process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    "no-unused-vars": "off"
   },
 
   overrides: [

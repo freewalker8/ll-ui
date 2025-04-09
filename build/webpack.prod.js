@@ -23,7 +23,8 @@ let externals = {
   'async-validator': 'async-validator',
   'async-validator/es/rule': 'async-validator/es/rule',
   'async-validator/es/util': 'async-validator/es/util',
-  'lodash-es': 'lodash-es'
+  'lodash-es': 'lodash-es',
+  sortablejs: 'sortablejs'
 };
 
 if (isUmd) {
@@ -32,7 +33,8 @@ if (isUmd) {
   entry = resolve('../src/packages/index.umd.js');
   externals = {
     vue: 'Vue',
-    axios: 'axios'
+    axios: 'axios',
+    sortablejs: 'Sortable',
   };
 }
 

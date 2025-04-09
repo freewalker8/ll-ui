@@ -6,7 +6,7 @@
       :form-items="formItems"
       :rules="rules"
       :model="formData"
-      :post-data="formSubmit"
+      :post-data="submitForm"
       button-position="center"
       label-width="100px"
     ></ll-form>
@@ -15,7 +15,7 @@
       :form-items="formItemsEffect"
       :rules="rules"
       :model="formDataEffect"
-      :post-data="formSubmit"
+      :post-data="submitForm"
       label-width="100px"
     ></ll-form>
     <h3>表单项是否展示依赖其它表单项的值，动态的修改formItems属性的绑定值来控制表单项的展示</h3>
@@ -23,7 +23,7 @@
     <ll-form
       :form-items="formItemsEffect2"
       :model="formDataEffect2"
-      :post-data="formSubmit"
+      :post-data="submitForm"
       button-position="right"
       label-width="100px"
     ></ll-form>
@@ -85,12 +85,12 @@ export default {
   watch: {
     'formDataEffect2.age': {
       handler(val) {
-        const { formDataEffect2 } = this;
+        const { formItemsEffect2 } = this;
         // 填写了年龄，增减填写电话的表单项
         if (val) {
           formItemsEffect2.splice(2, 0, { type: 'input', label: '电话', prop: 'phone' });
         } else {
-          formDataEffect2.forEach(({ prop }, index) => {
+          formItemsEffect2.forEach(({ prop }, index) => {
             if ('phone' === prop) {
               formItemsEffect2.splice(index, 1);
               return;
