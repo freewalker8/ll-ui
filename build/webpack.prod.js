@@ -34,7 +34,7 @@ if (isUmd) {
   externals = {
     vue: 'Vue',
     axios: 'axios',
-    sortablejs: 'Sortable',
+    sortablejs: 'Sortable'
   };
 }
 

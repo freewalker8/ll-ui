@@ -84,9 +84,7 @@ export default {
       const { minColumnNum, columnFilterAlwaysSelected } = this;
       const columnFilterAlwaysSelectedLen = columnFilterAlwaysSelected.length;
 
-      return minColumnNum > columnFilterAlwaysSelectedLen
-        ? minColumnNum
-        : columnFilterAlwaysSelectedLen;
+      return minColumnNum > columnFilterAlwaysSelectedLen ? minColumnNum : columnFilterAlwaysSelectedLen;
     },
     // 计算最大展示列数
     innerMaxColumnNum() {
@@ -107,7 +105,7 @@ export default {
       const realCheckedColumns = [...checkedColumns, ...columnFilterAlwaysSelected].filter(
         (prop, idx, arr) => !!prop && arr.indexOf(prop) === idx
       );
-      
+
       return realCheckedColumns;
     }
   },
@@ -132,7 +130,7 @@ export default {
   methods: {
     /**
      * 渲染过滤器表单
-     * @returns 
+     * @returns
      */
     _renderFilterForm() {
       const {
@@ -166,9 +164,9 @@ export default {
                     const { isFiltered, filterColumnVisible, checkedColumns } = this;
                     // 发生了筛选操作 && 不是初始化 && 筛选内容有变化;则发送筛选完成事件
                     if (
-                      isFiltered && 
-                      filterColumnVisible && 
-                      !val && 
+                      isFiltered &&
+                      filterColumnVisible &&
+                      !val &&
                       isUniqueArrayItemEqual(checkedColumns, CHECKED_COLUMNS_BAK)
                     ) {
                       this.$emit('column-filter-confirm', checkedColumns);
@@ -285,7 +283,7 @@ export default {
       const selectedColumnProps = columnFilterSelected.length
         ? columnFilterSelected
         : this.canFilterColumns.map(item => item.prop);
-      
+
       this._handleCheckboxChange(selectedColumnProps);
 
       // 对外暴露重置事件，用于用户用columnFilterSelected属性来自定义重置状态

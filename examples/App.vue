@@ -3,7 +3,7 @@
     <div class="nav">
       <span><router-link :to="{ path: '/form/demo' }">表单基础示例</router-link></span>
       <span><router-link :to="{ path: '/form/custom-operate-button' }">自定义表单操作按钮</router-link></span>
-      <span><router-link :to="{ path: '/form/dynamic-form' }">动态增减表单项示例</router-link></span>      
+      <span><router-link :to="{ path: '/form/dynamic-form' }">动态增减表单项示例</router-link></span>
     </div>
     <div class="nav">
       <span><router-link :to="{ path: '/table/table-static' }">表格示例</router-link></span>

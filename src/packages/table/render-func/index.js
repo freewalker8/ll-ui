@@ -1,4 +1,4 @@
-import { getObjArrayItemByKeyValue, isFunction } from "../../../utils/util";
+import { getObjArrayItemByKeyValue, isFunction } from '../../../utils/util';
 
 /**
  * 表格列字段转换
@@ -6,7 +6,7 @@ import { getObjArrayItemByKeyValue, isFunction } from "../../../utils/util";
  * @param {Object} params
  * @param {String} other
  */
- export const highLightTransfer = (h, params, other = '') => {
+export const highLightTransfer = (h, params, other = '') => {
   let value = other || params.row[params.column.property] || '';
   let type = Object.prototype.toString.call(value);
   let val = type === '[object Array]' ? value[0].ip : type === '[object Object]' ? value.ip : value;
@@ -33,7 +33,7 @@ export const getEmptyPlaceholderVal = (val, _self, DefaultProps) => {
   const isNull = val === '' || val === null || val === undefined;
 
   return isNull ? _emptyPlaceholder : val;
-}
+};
 
 /**
  * 将空值渲染为占位符
@@ -46,12 +46,16 @@ export const emptyPlaceholderRender = DefaultProps => {
     const val = row[column.property];
     const value = val || getEmptyPlaceholderVal(val, _self, DefaultProps);
 
-    return h('span', {
-      class: {
-        'll-table__empty-placeholder': true
-      }
-    }, value);
-  }
+    return h(
+      'span',
+      {
+        class: {
+          'll-table__empty-placeholder': true
+        }
+      },
+      value
+    );
+  };
 };
 
 let isValueSaved = false; // 值是否保存
@@ -109,13 +113,13 @@ export const editableRender = (prop, propsData, DefaultProps) => {
           const message = _self.saveMessage || DefaultProps.saveMessage;
           // 弹出提示信息后不再重复弹出
           if (row._messaged === undefined) {
-            _self.$message 
+            _self.$message
               ? _self.$message({
-                message,
-                type: 'error',
-                duration: 0,
-                showClose: true
-              })
+                  message,
+                  type: 'error',
+                  duration: 0,
+                  showClose: true
+                })
               : alert(message);
             row._messaged = true;
           }
@@ -130,7 +134,7 @@ export const editableRender = (prop, propsData, DefaultProps) => {
     };
 
     const buttonJsx = autoSave ? null : (
-      <div slot="suffix">
+      <div slot='suffix'>
         <el-button
           {...{
             props: { size, type: 'primary' },
@@ -140,8 +144,7 @@ export const editableRender = (prop, propsData, DefaultProps) => {
                 emitCellChange();
               }
             }
-          }}
-        >
+          }}>
           {_self.saveLabel || DefaultProps.saveLabel}
         </el-button>
         <el-button
@@ -154,8 +157,7 @@ export const editableRender = (prop, propsData, DefaultProps) => {
                 isManualCancel = true;
               }
             }
-          }}
-        >
+          }}>
           {_self.cancelLabel || DefaultProps.cancelLabel}
         </el-button>
       </div>
@@ -165,7 +167,7 @@ export const editableRender = (prop, propsData, DefaultProps) => {
       attrs: { id },
       props: {
         size,
-        value: row[prop],
+        value: row[prop]
       },
       on: {
         input: v => {
@@ -183,11 +185,11 @@ export const editableRender = (prop, propsData, DefaultProps) => {
       },
       nativeOn: {
         click: e => e.stopPropagation(),
-        keyup: (e) => {
+        keyup: e => {
           if (!_self.enterSave || !DefaultProps.enterSave) {
             return;
           }
-          if (e.keyCode === 13) {           
+          if (e.keyCode === 13) {
             emitCellChange();
           }
         }
@@ -204,7 +206,7 @@ export const editableRender = (prop, propsData, DefaultProps) => {
 
     return (
       <el-row
-        class="ll-table__cell-editable"
+        class='ll-table__cell-editable'
         {...{
           nativeOn: {
             click: () => {
@@ -218,12 +220,11 @@ export const editableRender = (prop, propsData, DefaultProps) => {
               });
             }
           }
-        }}
-      >
-        {row._showInput === true || row._showInput === prop 
+        }}>
+        {row._showInput === true || row._showInput === prop
           ? inputerJsx
           : row[prop] || getEmptyPlaceholderVal(row[prop], _self, DefaultProps)}
       </el-row>
     );
   };
-}
+};

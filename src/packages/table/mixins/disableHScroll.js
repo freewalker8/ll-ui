@@ -46,7 +46,7 @@ export default {
     operateColumnProps: {
       type: Array,
       default: () => ['action']
-    },   
+    }
   },
   data() {
     return {
@@ -91,7 +91,7 @@ export default {
       let counter = 0;
       let hasScrollBar = false;
       const { $el } = this;
-      while(counter < 20 && !hasScrollBar) {
+      while (counter < 20 && !hasScrollBar) {
         hasScrollBar = !$el.querySelector('.is-scrolling-none');
         counter++;
         await sleep(50);
@@ -184,9 +184,9 @@ export default {
           // 按displayWeight值正序排列
           return a.displayWeight - b.displayWeight;
         });
-      
+
       // 获取可以隐藏的列信息，未设置prop时不可隐藏
       this.ascHideableColumnProps = getProps(ascColumns);
     }
   }
-}
+};

@@ -15,7 +15,7 @@ import {
   isArray,
   isFunction,
   isBoolean,
-  sleep,
+  sleep
 } from '../../../utils/util';
 import Render from '../../../utils/render';
 import { getRowIdentity } from '../utils';
@@ -1336,10 +1336,10 @@ export default {
       extra: this.extraShow ? <div class={'ll-table__extra'}>{this.$slots.extra}</div> : null,
       pagination:
         // 配置了需要分页栏 && 数据总数大于每页展示数
-        this.paginationShow && this.innerTotal ? (         
+        this.paginationShow && this.innerTotal ? (
           <el-pagination
             ref='elPagination'
-            class={'ll-table__pagination'}            
+            class={'ll-table__pagination'}
             {...{
               props: {
                 background: true,
@@ -1356,8 +1356,7 @@ export default {
                 'next-click': this.handleNextClick,
                 'current-change': this.handleCurrentChange
               }
-            }}
-          >
+            }}>
             {
               <div class={'ll-table__pagination-extra'}>
                 {/* 提供插槽供用户自定义分页栏内容 */}
@@ -1371,7 +1370,7 @@ export default {
                   })}
               </div>
             }
-          </el-pagination>           
+          </el-pagination>
         ) : null
     };
     return (

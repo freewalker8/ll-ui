@@ -55,4 +55,4 @@ export default {
   unbind(el, binding) {
     resizeListen(el, binding.value, false);
   }
-}
+};

@@ -1,4 +1,4 @@
-import { getObjArrayItemByKeyValue } from "../../../utils/util";
+import { getObjArrayItemByKeyValue } from '../../../utils/util';
 
 export const getRowIdentity = (row, rowKey) => {
   if (typeof rowKey === 'string') {
@@ -33,7 +33,14 @@ export const LL_ROW_LEVEL_KEY = '__ll_row_level';
  * @param {Number} level ? 元素层级
  * @returns {Array<Object>} flatenedArr 扁平化后的数组
  */
-export const flattenArray = (arr, rowKey, childrenKey = 'children', parentId = '', flatenedArr = [], level = 1) => {
+export const flattenArray = (
+  arr,
+  rowKey,
+  childrenKey = 'children',
+  parentId = '',
+  flatenedArr = [],
+  level = 1
+) => {
   const _flattenedArr = flatenedArr;
   arr.forEach(item => {
     item[LL_ROW_PARENT_KEY] = parentId;
@@ -48,7 +55,7 @@ export const flattenArray = (arr, rowKey, childrenKey = 'children', parentId = '
   });
 
   return _flattenedArr;
-}
+};
 
 /**
  * 还原扁平化数组
@@ -83,4 +90,4 @@ export const unFlattenArray = (arr, rowKey, parentIdKey, childrenKey = 'children
   });
 
   return unFlattenArr;
-}
+};

@@ -2,7 +2,7 @@
  * @Author: lianglei stone.ll@qq.com
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-03 15:24:15
+ * @LastEditTime: 2025-04-09 16:33:07
  * @FilePath: \ll-ui\src\packages\table\mixins\actionColumn.js
  * @Description: 操作列
  */
@@ -46,8 +46,8 @@ export default {
             let label = '';
 
             // 按钮包含文本，只支持文本作为按钮的模板
-            if (children && children.length) {              
-              label = text.children[0].text;
+            if (children && children.length) {
+              label = children[0].text;
             }
 
             // 组装成buttons属性接受的按钮配置对象

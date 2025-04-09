@@ -46,9 +46,7 @@ export default {
       default: () => ({}),
       validator(val) {
         if (Object.keys(val).length && (!val.data || !val.total)) {
-          console.error(
-            `[ll-table]:props-map属性配置必须包含'data'和'total'属性`
-          );
+          console.error(`[ll-table]:props-map属性配置必须包含'data'和'total'属性`);
           return false;
         }
         return true;
@@ -178,7 +176,7 @@ export default {
         currentPage: currentPageKey = 'currentPage'
       } = this.innerPropsMap;
 
-      const { [pageSizeKey]: pageSize, [currentPageKey]: currentPage, ...other } = extraParams
+      const { [pageSizeKey]: pageSize, [currentPageKey]: currentPage, ...other } = extraParams;
 
       const payload = {
         ...other,
@@ -215,10 +213,12 @@ export default {
               list = get(res, 'data');
             }
 
-            if(isArray(list)) {
+            if (isArray(list)) {
               this.curTableData = list;
             } else {
-              throw new Error(`[ll-table]:获取表格数据失败，请检查表格配置的接口数据映射（props-map）是否正确`);
+              throw new Error(
+                `[ll-table]:获取表格数据失败，请检查表格配置的接口数据映射（props-map）是否正确`
+              );
             }
 
             // 获得数据总数
@@ -248,7 +248,9 @@ export default {
                 this.innerTotal > 0 && this._handleCurrentChange(pages);
               }
             } else {
-              throw new Error(`[ll-table]:获取表格数据总数失败，请检查表格配置的接口数据映射（props-map）是否正确`)
+              throw new Error(
+                `[ll-table]:获取表格数据总数失败，请检查表格配置的接口数据映射（props-map）是否正确`
+              );
             }
           }
 
@@ -267,7 +269,7 @@ export default {
           !this.paginationSelectable && this.clearAllSelection();
         })
         .catch(e => {
-          console.error(`[ll-table]:获取表格数据失败，详情:${e}`)
+          console.error(`[ll-table]:获取表格数据失败，详情:${e}`);
           return e;
         })
         .finally(() => {
@@ -314,7 +316,7 @@ export default {
         });
       } else {
         throw new Error(`[ll-table]:未配置请求方法，请配置fetch实例或自定义httpRequest方法`);
-      }      
+      }
     },
     /**
      * @override

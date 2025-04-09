@@ -88,7 +88,7 @@ export default {
           data.splice(start, innerPageSize);
           // 将新的数据添加到被删除数据的位置
           data.splice(start, 0, ...cloneDeep(pageData));
-          
+
           this.innerData = data;
         } else {
           this.innerData = pageData;
@@ -107,7 +107,9 @@ export default {
         let ceilTotalPage = Math.ceil(innerTotal / innerPageSize);
 
         if (innerCurrentPage > ceilTotalPage) {
-          console.warn(`[ll-table]:当前页码(${currentPage})超过了总页数(${ceilTotalPage})，自动将当前页码设置为了最大页码((${ceilTotalPage})`);
+          console.warn(
+            `[ll-table]:当前页码(${currentPage})超过了总页数(${ceilTotalPage})，自动将当前页码设置为了最大页码((${ceilTotalPage})`
+          );
           this.innerCurrentPage = ceilTotalPage;
         }
 

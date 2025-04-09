@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       curTableDataFlatten: [],
-      curTableDataFlattenBak: [],
+      curTableDataFlattenBak: []
     };
   },
   created() {
@@ -62,7 +62,7 @@ export default {
   mounted() {
     if (this.rowDraggable) {
       // fix Firefox浏览器，阻止默认的拖动搜索功能
-      this.$el.ondrop = function (e) {
+      this.$el.ondrop = function(e) {
         e.preventDefault();
         e.stopPropagation();
       };
@@ -73,10 +73,10 @@ export default {
           draggable: '.el-table__row',
           ...this.dragOptions,
           group: {
-            name: this.dragGroup,
+            name: this.dragGroup
           },
           ghostClass: this.ghostClass,
-          chosenClass: this.chosenClass,
+          chosenClass: this.chosenClass
         };
 
         Sortable.create(this.$el.querySelector('.el-table__body-wrapper tbody'), {
@@ -84,21 +84,21 @@ export default {
           onChoose: () => {
             this._backupCurTableDataFlatten();
           },
-          onEnd: (evt) => {
+          onEnd: evt => {
             const { rowKey, curTableDataFlatten } = this;
-            let { oldIndex: fromIndex, newIndex: toIndex  } = evt;
+            let { oldIndex: fromIndex, newIndex: toIndex } = evt;
             const fromData = curTableDataFlatten[fromIndex];
             const toData = curTableDataFlatten[toIndex];
-  
+
             // 未拖动形成排序，只是拖动了一行数据
             if (fromData[rowKey] === toData[rowKey]) {
               return;
             }
-  
+
             this._handleDrag(fromData, toData, fromIndex, toIndex);
-          },
+          }
         });
-      });      
+      });
     }
   },
   methods: {
@@ -134,7 +134,7 @@ export default {
     },
     /**
      * 拖动数据处理
-     * @param {Object} fromData 被拖动行数据 
+     * @param {Object} fromData 被拖动行数据
      * @param {Object} toData 被拖动到的位置原行对应的数据
      * @param {Number} fromIndex 被拖动行数据对象在表格数据中的索引
      * @param {Number} toIndex 被拖动到的位置原行对应的数据在表格数据中的索引
@@ -156,7 +156,7 @@ export default {
       if (this._isDragDataSon(fromData, toData)) {
         const errorMessage = '拖拽失败，不能父子节点拖拽到自己的子节点内';
         if (this.handleRowSortError) {
-          this.handleRowSortError('row-sort-error' ,errorMessage); // 使用用户配置的自定义的错误处理
+          this.handleRowSortError('row-sort-error', errorMessage); // 使用用户配置的自定义的错误处理
         } else {
           this.$message.error(errorMessage);
         }
@@ -221,7 +221,7 @@ export default {
               break;
             }
           }
-        }             
+        }
       }
       // 将节点移动到根节点（提升为一级节点）
       else if (!toData[LL_ROW_PARENT_KEY]) {
@@ -238,7 +238,7 @@ export default {
         }
       }
 
-      const from = { ...dragData[0] }; 
+      const from = { ...dragData[0] };
       const to = { ...toData };
       // 位置不能换，数据还原成树状结构后LL_ROW_PARENT_KEY属性被删除，暴露给用户的from属性需要保留LL_ROW_PARENT_KEY属性
       const curTableData = unFlattenArray(curTableDataFlatten, rowKey, LL_ROW_PARENT_KEY);
@@ -251,7 +251,7 @@ export default {
         to,
         fromIndex,
         toIndex,
-        dragData: from,
+        dragData: from
       });
     },
     /**
@@ -275,7 +275,7 @@ export default {
             row.children && calcFix(row);
           });
         }
-      }
+      };
 
       calcFix(fromData);
 
@@ -299,5 +299,5 @@ export default {
     _expandTargetNode(targetId) {
       !this.innerExpandRowKeys.includes(targetId) && this.innerExpandRowKeys.push(targetId);
     }
-  },
-}
+  }
+};
