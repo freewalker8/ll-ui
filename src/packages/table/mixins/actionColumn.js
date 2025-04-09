@@ -7,7 +7,7 @@
  * @Description: 操作列
  */
 import { merge } from 'lodash-es';
-import { isFunction, sortObjectArrayByProp } from 'll-ui/utils/util';
+import { isFunction, sortObjectArrayByProp } from '../../../utils/util';
 
 export default {
   props: {

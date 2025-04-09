@@ -1,5 +1,4 @@
-import { isObject } from 'll-ui/utils/util';
-import { debounce } from 'lodash-es';
+import { isObject } from '../../../utils/util';
 
 // 默认分页配置
 const DefaultPaginationProps = {

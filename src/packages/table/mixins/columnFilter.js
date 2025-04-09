@@ -1,4 +1,4 @@
-import { isUniqueArrayItemEqual } from 'll-ui/utils/util';
+import { isUniqueArrayItemEqual } from '../../../utils/util';
 import DefaultProps from '../config';
 
 let CHECKED_COLUMNS_BAK = [];

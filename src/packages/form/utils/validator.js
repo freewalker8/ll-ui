@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 /**
  * 表单校验
  * 提供registerValidateType校验类型注册函数注册自己的校验类型来实现快速校验
@@ -30,7 +31,7 @@ function format(template) {
   let args = new Array(_len > 1 ? _len - 1 : 0);
   let _key = 1;
 
-  for(; _key < _len; _key++) {
+  for (; _key < _len; _key++) {
     args[_key - 1] = arguments[_key];
   }
 
@@ -52,13 +53,13 @@ function format(template) {
         return x;
       }
 
-      switch(x) {
+      let val = '';
+      switch (x) {
         case '%s':
           return String(args[i++]);
         case '%d':
           return Number(args[i++]);
         case '%j':
-          let val = '';
           try {
             val = JSON.stringify(args[i++]);
           } catch (error) {
@@ -106,10 +107,22 @@ export const regValidator = function(str, reg) {
       return false;
     }
   }
-}
+};
 
 // async-validator默认支持的校验类型（type）
-export const existsTypes = ['integer', 'float', 'array', 'email', 'number', 'date', 'url', 'regexp', 'object', 'method', 'hex'];
+export const existsTypes = [
+  'integer',
+  'float',
+  'array',
+  'email',
+  'number',
+  'date',
+  'url',
+  'regexp',
+  'object',
+  'method',
+  'hex'
+];
 
 export const defaultTypes = existsTypes;
 
@@ -119,7 +132,7 @@ export const defaultTypes = existsTypes;
  * @param {RegExp | String} reg 正则表达式实例或能转换为正则实例的字符串
  * @param {String} msg 错误提示信息，可选，不填该项则会产出默认的错误提示信息
  */
-export const registerValidateType = function (type, reg, msg) {
+export const registerValidateType = function(type, reg, msg) {
   if (existsTypes.includes(type)) {
     console.warn(`[ll-form]:校验类型${type}已经存在`);
     return;
@@ -138,18 +151,19 @@ export const registerValidateType = function (type, reg, msg) {
 
         if (value !== undefined) {
           if (!regValidator(value, reg)) {
-            const _msg = msg || format(options.messages[type], rule.fullField) || `值${value}匹配正则表达式${reg}失败`;
+            const _msg =
+              msg || format(options.messages[type], rule.fullField) || `值${value}匹配正则表达式${reg}失败`;
             errors.push(_msg);
           }
         }
       }
 
       callback(errors);
-    }
+    };
   })(reg, msg);
 
   AsyncValidator.register(type, validator);
-}
+};
 
 /**
  * 批量注册校验类型
@@ -158,7 +172,7 @@ export const registerValidateType = function (type, reg, msg) {
 export const registerValidateTypes = function(types) {
   types.forEach(({ type, reg, message }) => {
     registerValidateType(type, reg, message);
-  })
-}
+  });
+};
 
 export default regValidator;

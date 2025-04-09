@@ -1,4 +1,4 @@
-import { isTypeOf } from '@/utils/util';
+import { isTypeOf } from '../../../../utils/util';
 import EchoImg from './EchoImg';
 
 export default {
@@ -51,7 +51,7 @@ export default {
         .then(() => {
           this.asyncUploadSuccess = true;
         })
-        .catch(error => {
+        .catch(err => {
           // 删除上传失败的文件
           files = files.filter(({ name }) => name !== params.filename);
           const msg = '文件上传失败';
@@ -60,8 +60,8 @@ export default {
         })
         .finally(() => {
           this.uploading = false;
-        })
-    }
+        });
+    };
 
     return (
       <el-upload
@@ -131,25 +131,29 @@ export default {
           },
           nativeOn,
           ref: `uploadRef_${prop}`
-        }}
-      >
+        }}>
         {showTrigger ? (
-          trigger ? (<template slot="trigger">{trigger}</template>)
-            : (
-              <div style="text-align: left">
-                <el-button size={this.size} type="primary">{uploadText}</el-button>
-              </div>
-            )
+          trigger ? (
+            <template slot='trigger'>{trigger}</template>
+          ) : (
+            <div style='text-align: left'>
+              <el-button size={this.size} type='primary'>
+                {uploadText}
+              </el-button>
+            </div>
+          )
         ) : (
-          <template slot="trigger">
-            <span style="display: none"></span>
+          <template slot='trigger'>
+            <span style='display: none'></span>
           </template>
         )}
-        {tip ? <template slot="tip">{tip}</template> : accept ? `只能上传${accept}格式的文件` : null}
-        {this.isPreviewImg && isTypeOf(files, 'array') && files.map(img => {
-          <echo-img raw={img} {...{ props: { viewBigPic, thumbHeight, thumbWidth } }}></echo-img>
-        })}
+        {tip ? <template slot='tip'>{tip}</template> : accept ? `只能上传${accept}格式的文件` : null}
+        {this.isPreviewImg &&
+          isTypeOf(files, 'array') &&
+          files.map(img => (
+            <echo-img raw={img} {...{ props: { viewBigPic, thumbHeight, thumbWidth } }}></echo-img>
+          ))}
       </el-upload>
     );
   }
-}
+};

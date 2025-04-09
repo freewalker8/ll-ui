@@ -11,10 +11,10 @@
       :submit-button-attrs="{ size: 'mini', type: 'success' }"
     >
       <!-- 自己实现表单提交按钮和操作 -->
-      <template slot="operate" slot-scope="{ resetForm, formData, validateForm }">
+      <template slot="operate" slot-scope="{ resetForm, formData: innerFormData, validateForm }">
         <div style="text-align: center">
           <el-button @click="resetForm">Reset</el-button>
-          <el-button type="primary" :loading="formLoading" @click="handlerSubmit(formData, validateForm)"
+          <el-button type="primary" :loading="formLoading" @click="handlerSubmit(innerFormData, validateForm)"
             >Ok</el-button
           >
         </div>

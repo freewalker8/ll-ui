@@ -4,7 +4,7 @@
  * @LastEditors: freewalker8 stone.ll@qq.com
  * @LastEditTime: 2025-01-24 15:57:28
  * @FilePath: \ll-ui\src\packages\form\mixins\StepForm.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: 分步表单
  */
 import { flattenFormItems } from 'utils/util';
 
@@ -26,7 +26,7 @@ export default {
       default: '上一步'
     },
     // 下一步按钮的文本
-    prevStepLabel: {
+    nextStepLabel: {
       type: String,
       default: '下一步'
     },
@@ -42,7 +42,7 @@ export default {
       type: String,
       default: 'top',
       validator(v) {
-        if(['top', 'left'].includes(v)) {
+        if (['top', 'left'].includes(v)) {
           return true;
         }
         console.warn(`[ll-form][warn]:表单属性'steps-position'可选值为：'top'、'left'`);
@@ -51,26 +51,27 @@ export default {
     },
     // 步骤条宽度，step = true时生效
     stepsWidth: {
-      type: [String,Number],
+      type: [String, Number],
       default: '100%'
     },
     // 步骤条高度，step = true时生效
-    stepsWidth: {
-      type: [String,Number],
+    stepsHeight: {
+      type: [String, Number],
       default: 'auto'
     }
   },
   data() {
     return {
       innerActiveStep: this.activeStep
-    }
+    };
   },
   computed: {
     stepsConfig() {
-      return this.step ? this.formItems.map(item => {
-          const { title, icon, description, status } = item;
-          return { title, icon, description, status };
-        })
+      return this.step
+        ? this.formItems.map(item => {
+            const { title, icon, description, status } = item;
+            return { title, icon, description, status };
+          })
         : [];
     }
   },
@@ -82,7 +83,7 @@ export default {
   methods: {
     /**
      * 渲染分步表单
-     * @param {Function} h  
+     * @param {Function} h createElement
      * @param {Arra<FormItem>} formItems 表单项配置数组
      * @param {Number} index 索引，在数组中的位置
      * @returns {JSX} 表单项内容模板
@@ -90,10 +91,9 @@ export default {
     _renderStepForm(h, formItems, index) {
       const { innerActiveStep, _renderFormItems } = this;
       return (
-        <el-row 
-          class="ll-form__clear-both"
-          {...{directives: [{ name: 'show', value: innerActiveStep === index }]}}
-        >
+        <el-row
+          class='ll-form__clear-both'
+          {...{ directives: [{ name: 'show', value: innerActiveStep === index }] }}>
           {_renderFormItems(h, formItems)}
         </el-row>
       );
@@ -113,8 +113,7 @@ export default {
               ...stepAttrs
             },
             class: 'll-form__steps'
-          }}
-        >
+          }}>
           {stepsConfig.map((stepAttrs, index) => {
             return (
               <el-step
@@ -125,8 +124,7 @@ export default {
                       _handlerStepJump(index);
                     }
                   }
-                }}
-              ></el-step>
+                }}></el-step>
             );
           })}
         </el-steps>
