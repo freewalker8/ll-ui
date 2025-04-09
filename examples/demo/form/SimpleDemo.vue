@@ -54,7 +54,7 @@
             label: '年龄',
             prop: 'age',
             formElementProps: {
-              width: 200,
+              // width: 200,
               min: 1,
               max: 200,
               step: 1,
