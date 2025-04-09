@@ -9,7 +9,7 @@
     <div class="nav">
       <span><router-link :to="{ path: '/table/table-static' }">表格示例</router-link></span>
     </div>
-    <div>
+    <div style="margin-top: 20px;">
       <router-view></router-view>
     </div>
   </div>

@@ -6,6 +6,7 @@
     :post-data="submitForm"
     button-position="center"
     label-width="100px"
+    class="ll-form-warp"
   ></ll-form>
 </template>
 
