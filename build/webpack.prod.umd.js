@@ -1,36 +1,29 @@
 /*
  * @Author: lianglei stone.ll@qq.com
- * @Date: 2025-04-10 09:02:36
+ * @Date: 2025-04-10 11:18:39
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-10 12:30:35
- * @FilePath: \ll-ui\build\webpack.prod.js
- * @Description: commonjs打包配置
+ * @LastEditTime: 2025-04-10 12:32:27
+ * @FilePath: \ll-ui\build\webpack.prod.umd.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TerserPlugin = require('terser-webpack-plugin');
-const { externals: commonExternals, resolve, alias, rules } = require('./common');
+const { externals, resolve, alias, rules } = require('./common');
 
 const pkg = require('../package.json');
-const reportFilename = resolve('../report.html');
-const filename = 'll.common.js';
-const entry = resolve('../src/packages/index.js');
-const externals = {
-  ...commonExternals,
-  'async-validator': 'async-validator',
-  'async-validator/es/rule': 'async-validator/es/rule',
-  'async-validator/es/util': 'async-validator/es/util'
-};
+const reportFilename = resolve('../report.umd.html');
+const filename = 'll.umd.js';
+const entry = resolve('../src/packages/index.umd.js');
 
 module.exports = {
   mode: 'production',
   entry,
   output: {
     library: 'll-ui',
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'umd',
     filename,
     path: resolve('../dist')
   },
