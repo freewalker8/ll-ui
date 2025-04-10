@@ -2,6 +2,7 @@
 node_modules
 /dist
 report*.html
+ll-ui*.tgz
 
 
 # local env files
