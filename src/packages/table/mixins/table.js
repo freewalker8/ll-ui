@@ -2,7 +2,7 @@
  * @Author: lianglei stone.ll@qq.com
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-09 16:10:40
+ * @LastEditTime: 2025-04-10 12:37:19
  * @FilePath: \ll-ui\src\packages\table\mixins\table.js
  * @Description: 表格
  */
@@ -1162,14 +1162,14 @@ export default {
       }
     }
   },
-  render(...args) {
+  render(h, ...args) {
     /**
      * 渲染列函数
      * @param {Object} propsData 列属性对象
      * @param {Boolean} hasChildren 是否是多级表头的子列
      * @returns {JSX}
      */
-    const _renderColumn = (propsData, hasChildren = false) => {
+    const _renderColumn = (h, propsData, hasChildren = false) => {
       const { render, header, scopedSlots = {}, on, onNative, children, ...props } = propsData;
       const { prop, type, order, editable = this.editable } = propsData;
       const thClassName = `${TH_BASE_CLASS}${prop || type}`; // 给表头列加上唯一的的class
@@ -1220,7 +1220,7 @@ export default {
         return (
           <el-table-column {...propData} key={key}>
             {children.map(c => {
-              return _renderColumn(c, true);
+              return _renderColumn(h, c, true);
             })}
           </el-table-column>
         );
@@ -1240,7 +1240,7 @@ export default {
       }
       // 全局配置了表格数据为空时的展示内容
       else if (emptySlot) {
-        return ($slots.empty = isFunction(emptySlot) ? emptySlot(...args) : emptySlot);
+        return ($slots.empty = isFunction(emptySlot) ? emptySlot(h, ...args) : emptySlot);
       }
 
       return null;
@@ -1322,14 +1322,14 @@ export default {
             }}>
             {this.tableColumns &&
               this.tableColumns.map(prop => {
-                return _renderColumn(prop);
+                return _renderColumn(h, prop);
               })}
             {/* empty slot */}
             {_renderEmptySlot()}
             {/* append slot */}
             {this.$slots.append}
-            {this._renderActionColumn()}
-            {this._renderFilterForm()}
+            {this._renderActionColumn(h)}
+            {this._renderFilterForm(h)}
           </el-table>
         </div>
       ),

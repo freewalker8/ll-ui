@@ -2,7 +2,7 @@
  * @Author: lianglei stone.ll@qq.com
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-09 16:33:07
+ * @LastEditTime: 2025-04-10 12:39:45
  * @FilePath: \ll-ui\src\packages\table\mixins\actionColumn.js
  * @Description: 操作列
  */
@@ -88,7 +88,7 @@ export default {
      * 渲染操作列
      * @returns {JSX}
      */
-    _renderActionColumn() {
+    _renderActionColumn(h) {
       return this.showActionColumn ? (
         <el-table-column
           prop={this.actionColumnProp}

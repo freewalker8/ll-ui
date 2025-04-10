@@ -132,7 +132,7 @@ export default {
      * 渲染过滤器表单
      * @returns
      */
-    _renderFilterForm() {
+    _renderFilterForm(h) {
       const {
         columnFilterable,
         columnFilterWidth,
@@ -219,7 +219,7 @@ export default {
                   })}
                 </el-row>
               </el-checkbox-group>
-              {this._renderFilterButton()}
+              {this._renderFilterButton(h)}
               <i slot='reference' class='el-icon-setting ll-table__filter-column-icon'></i>
             </el-popover>
           </template>
@@ -227,7 +227,7 @@ export default {
       ) : null;
     },
     // 菜单按钮
-    _renderFilterButton() {
+    _renderFilterButton(h) {
       const btnMap = {
         all: (
           <el-button type='primary' size='mini' onClick={this._handlerFilterAll}>

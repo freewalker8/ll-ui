@@ -737,7 +737,7 @@ export default {
     /**
      * 生成默认操作按钮
      */
-    _renderActionButton() {
+    _renderActionButton(h) {
       const {
         actionButtonLayout,
         size,
@@ -791,7 +791,9 @@ export default {
         ),
         prevStep: (
           <el-button
-            onClick={() => _handerStep(-1)}
+            onClick={() => {
+              _handerStep(-1);
+            }}
             {...{
               props: innerSubmitButtonAttrs,
               style: { display: innerActiveStep === 0 ? 'none' : 'inline-block' }
@@ -801,7 +803,9 @@ export default {
         ),
         nextStep: (
           <el-button
-            onClick={() => _handerStep(1)}
+            onClick={() => {
+              _handerStep(1);
+            }}
             {...{
               props: innerSubmitButtonAttrs,
               style: { display: innerActiveStep === stepsConfig.length - 1 ? 'none' : 'inline-block' }
@@ -1150,7 +1154,7 @@ export default {
               })}
             </el-col>
           ) : (
-            _renderActionButton()
+            _renderActionButton(h)
           )}
         </el-row>
       ) : null,
@@ -1185,7 +1189,7 @@ export default {
       if (stepsPosition === 'top') {
         return (
           <div>
-            {_renderSteps()}
+            {_renderSteps(h)}
             {formTemplate}
           </div>
         );
@@ -1197,7 +1201,7 @@ export default {
 
         return (
           <div style={{ display: 'flex' }}>
-            <div {...{ style: { flexBasis: stepsWidth, height: stepsHeight } }}>{_renderSteps()}</div>
+            <div {...{ style: { flexBasis: stepsWidth, height: stepsHeight } }}>{_renderSteps(h)}</div>
             <div {...{ style: { flexGrow: 2 } }}></div>
           </div>
         );

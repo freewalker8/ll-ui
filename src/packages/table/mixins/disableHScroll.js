@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
 import DefaultProps from '../config';
-import { TH_BEGIN_CLASS } from '../config/const';
+import { TH_BASE_CLASS } from '../config/const';
 import { sleep } from '../../../utils/util';
 
 function getProps(columns) {
@@ -143,7 +143,7 @@ export default {
         const className = prop || type;
         const realProp = className;
 
-        const thDom = this.$el.querySelector(`.${TH_BEGIN_CLASS}-${className}`); // 获取表头dom
+        const thDom = this.$el.querySelector(`.${TH_BASE_CLASS}-${className}`); // 获取表头dom
         const thDomWidth = thDom ? thDom.clientWidth : 0;
 
         // 列宽度获取顺序，通过thDom计算>列配置的width>列配置的minWidth>columnWidthFix（兜底宽度）

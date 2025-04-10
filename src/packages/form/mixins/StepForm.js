@@ -1,8 +1,8 @@
 /*
  * @Author: freewalker8 stone.ll@qq.com
  * @Date: 2025-01-02 15:25:32
- * @LastEditors: freewalker8 stone.ll@qq.com
- * @LastEditTime: 2025-01-24 15:57:28
+ * @LastEditors: lianglei stone.ll@qq.com
+ * @LastEditTime: 2025-04-10 12:41:08
  * @FilePath: \ll-ui\src\packages\form\mixins\StepForm.js
  * @Description: 分步表单
  */
@@ -102,7 +102,7 @@ export default {
      * 渲染分步栏
      * @returns {JSX} 分步栏模板
      */
-    _renderSteps() {
+    _renderSteps(h) {
       const { stepsConfig, stepAttrs, innerActiveStep, _handlerStepJump } = this;
       return (
         <el-steps
