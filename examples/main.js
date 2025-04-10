@@ -11,14 +11,7 @@ import ElementUI from 'element-ui';
 import App from './App.vue';
 import Router from './router';
 import CustomInput from './components/CustomInput.vue';
-import {
-  LlForm,
-  addUIType,
-  addUITypes,
-  UITypes,
-  registerValidateType,
-  useTable
-} from '../src/packages/index';
+import { LlForm, addUIType, addUITypes, UITypes, registerValidateType, useTable } from 'll-form-table';
 
 import 'normalize.css';
 import 'element-ui/lib/theme-chalk/index.css';
