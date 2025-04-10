@@ -2,6 +2,7 @@
   "name": "ll-ui",
   "version": "0.1.0",
   "private": true,
+  "main": "dist/ll.common.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:umd": "cross-env MODE=pkg NODE_ENV=production webpack --config ./build/webpack.prod.umd.js",
