@@ -1,10 +1,14 @@
-# ll-ui
+# ll-form-table
 
 基于vue2.6和element-ui的组件库，提供表单组件、表格组件。
 
 以数据驱动视图，将表单、表格由`template`语法转换成`json`语法。通过json配置模板，快速完成表单、表格的开发。
 
 ## 本地开发
+
+node版本要求：
+
+node >= 12.0.0 && node <= 14.0.0
 
 ### 安装依赖
 
@@ -22,14 +26,14 @@ npm run serve
 ### 安装
 
 ```
-npm install ll-ui
+npm install ll-form-table
 ```
 
 ### 使用方法
 
 ```js
 import Vue from 'vue';
-import LlUI, { LlFrom, LlTable, LlTableStatic, useTable } from 'll-ui';
+import LlUI, { LlFrom, LlTable, LlTableStatic, useTable } from 'll-form-table';
 
 // 全局注册表单
 Vue.use(LlForm);
@@ -60,7 +64,7 @@ Vue.use(LlUI);
 </template>
 
 <script>
-  import { LlForm } from 'll-ui';
+  import { LlForm } from 'll-form-table';
   export default {
     name: 'FormDemo',
     components: { LlForm },

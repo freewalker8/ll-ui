@@ -3,7 +3,7 @@
  * @Date: 2025-01-02 15:26:55
  * @LastEditors: freewalker8 stone.ll@qq.com
  * @LastEditTime: 2025-01-02 16:46:13
- * @FilePath: \ll-ui\src\utils\secRandom.js
+ * @FilePath: \ll-form-table\src\utils\secRandom.js
  * @Description: 重写 Math 的 random 方法,返回重写后的安全的 Math . random 方法
  */
 

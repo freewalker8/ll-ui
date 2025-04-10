@@ -2,7 +2,7 @@
 node_modules
 /dist
 report*.html
-ll-ui*.tgz
+ll-form-table*.tgz
 
 
 # local env files

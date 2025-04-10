@@ -3,7 +3,7 @@
  * @Date: 2025-04-10 09:02:36
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-10 18:18:51
- * @FilePath: \ll-ui\docs\form.md
+ * @FilePath: \ll-form-table\docs\form.md
  * @Description: 表单使用文档
 -->
 # LlForm
@@ -138,7 +138,7 @@ Vue.use(ElementUI);
 ## 3. 注册ll-form
 
 ```js
-import { LlForm} from 'll-ui';
+import { LlForm} from 'll-form-table';
 
 // 方式1，全局注册
 Vue.use(LlForm);
@@ -379,7 +379,7 @@ declare type FormItemConfig = {
 }
 ```
 
-组件将`FormItemType`的可选值通过`UITypes`进行了导出，可通过`import { UITypes } from 'll-ui'`导入使用。
+组件将`FormItemType`的可选值通过`UITypes`进行了导出，可通过`import { UITypes } from 'll-form-table'`导入使用。
 
 通过`type`和`formElementProps`配置表单项的示例：参见[4.2 通过formItems配置对象定义表单](#42-通过formitems配置对象定义表单)
 

@@ -3,7 +3,7 @@
  * @Date: 2025-04-02 10:55:20
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-02 10:55:30
- * @FilePath: \ll-ui\crlf2lf.js
+ * @FilePath: \ll-form-table\crlf2lf.js
  * @Description: 遍历文件夹下的文件（默认src）将换行符从crlf 改为 lf
  */
 const fs = require('fs');

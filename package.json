@@ -1,5 +1,5 @@
 {
-  "name": "ll-ui",
+  "name": "ll-form-table",
   "version": "0.1.0",
   "private": true,
   "main": "dist/ll.common.js",
@@ -64,7 +64,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freewalker8/ll-ui.git"
+    "url": "https://github.com/freewalker8/ll-form-table.git"
   },
   "keywords": [
     "vue",
@@ -76,6 +76,6 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/freewalker8/ll-ui/issues"
+    "url": "https://github.com/freewalker8/ll-form-table/issues"
   }
 }

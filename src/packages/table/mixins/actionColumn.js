@@ -3,7 +3,7 @@
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-10 12:39:45
- * @FilePath: \ll-ui\src\packages\table\mixins\actionColumn.js
+ * @FilePath: \ll-form-table\src\packages\table\mixins\actionColumn.js
  * @Description: 操作列
  */
 import { merge } from 'lodash-es';

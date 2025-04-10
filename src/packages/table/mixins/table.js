@@ -3,7 +3,7 @@
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-10 12:37:19
- * @FilePath: \ll-ui\src\packages\table\mixins\table.js
+ * @FilePath: \ll-form-table\src\packages\table\mixins\table.js
  * @Description: 表格
  */
 import { debounce, cloneDeep } from 'lodash-es';

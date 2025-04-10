@@ -3,7 +3,7 @@
  * @Date: 2025-04-10 09:02:36
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-10 12:30:35
- * @FilePath: \ll-ui\build\webpack.prod.js
+ * @FilePath: \ll-form-table\build\webpack.prod.js
  * @Description: commonjs打包配置
  */
 const webpack = require('webpack');
@@ -29,7 +29,7 @@ module.exports = {
   mode: 'production',
   entry,
   output: {
-    library: 'll-ui',
+    library: 'll-form-table',
     libraryTarget: 'commonjs2',
     filename,
     path: resolve('../dist')

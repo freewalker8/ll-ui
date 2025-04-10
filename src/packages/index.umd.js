@@ -3,7 +3,7 @@
  * @Date: 2022-02-17 10:22:05
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-09 10:19:57
- * @FilePath: \ll-ui\src\packages\index.umd.js
+ * @FilePath: \ll-form-table\src\packages\index.umd.js
  * @Description: 组件导出
  */
 import { LlForm, addUIType, addUITypes, UITypes } from './form';

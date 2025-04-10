@@ -3,7 +3,7 @@
  * @Date: 2025-04-02 10:59:59
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-08 18:29:14
- * @FilePath: \ll-ui\src\packages\table\components\StaticTable.js
+ * @FilePath: \ll-form-table\src\packages\table\components\StaticTable.js
  * @Description: 静态表格
  */
 import { cloneDeep, isEqual, debounce } from 'lodash-es';

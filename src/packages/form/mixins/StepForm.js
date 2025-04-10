@@ -3,7 +3,7 @@
  * @Date: 2025-01-02 15:25:32
  * @LastEditors: lianglei stone.ll@qq.com
  * @LastEditTime: 2025-04-10 12:41:08
- * @FilePath: \ll-ui\src\packages\form\mixins\StepForm.js
+ * @FilePath: \ll-form-table\src\packages\form\mixins\StepForm.js
  * @Description: 分步表单
  */
 import { flattenFormItems } from 'utils/util';

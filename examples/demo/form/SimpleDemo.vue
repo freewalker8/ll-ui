@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import { LlForm } from 'll-ui';
+  import { LlForm } from 'll-form-table';
   export default {
     name: 'FormDemo',
     components: { LlForm },

@@ -94,7 +94,7 @@ export const setProps = (options, debounce = false) => {
 
   // 非法参数
   if (!isObject(options) || Object.keys(options).length === 0) {
-    console.error(`[ll-ui][ll-table]:setProps 参数错误，预期为非空对象`);
+    console.error(`[ll-form-table][ll-table]:setProps 参数错误，预期为非空对象`);
     return;
   }
 

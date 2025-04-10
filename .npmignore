@@ -7,7 +7,7 @@ node_modules
 /tests
 .browserslistrc
 report*.html
-ll-ui*.tgz
+ll-form-table*.tgz
 
 
 # local env files

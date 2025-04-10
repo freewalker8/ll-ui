@@ -28,7 +28,7 @@ const externals = {
 
 const alias = {
   '@': resolve('../src'),
-  'll-ui': resolve('../src/packages'),
+  'll-form-table': resolve('../src/packages'),
   packages: resolve('../src/packages'),
   utils: resolve('../src/utils')
 };
