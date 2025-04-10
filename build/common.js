@@ -44,7 +44,15 @@ const rules = [
     use: {
       loader: 'babel-loader',
       options: {
-        presets: ['@vue/babel-preset-jsx'],
+        presets: [
+          '@vue/cli-plugin-babel/preset',
+          [
+            '@vue/babel-preset-jsx',
+            {
+              injectH: false
+            }
+          ]
+        ],
         plugins: ['@babel/plugin-syntax-jsx']
       }
     }
