@@ -91,7 +91,7 @@
 请先安装[Vue 2.x](https://cn.vuejs.org/)和[Element-ui 2.x](http://element-cn.eleme.io/2.0/8/zh-CN)。
 :::
 
-### 2.1引入element-ui
+### 2.1 引入element-ui
 
 强依赖组件，使用`ll-form`时必须注册下列组件：
 
