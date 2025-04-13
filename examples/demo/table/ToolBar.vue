@@ -3,6 +3,8 @@ import { serialize } from 'v8';
 <template>
   <div class="ll-table-toolbar">
     <div class="ll-table-toolbar__action">
+      <el-button type="primary" size="small" @click="$emit('reset')">重置表格</el-button>
+      <el-button type="primary" size="small" @click="$emit('clear')">清除选中数据</el-button>
       <el-button size="small" type="primary" @click="$emit('add')">添加</el-button>
       <el-button :loading="innerDeleteLoading" size="small" type="danger" @click="$emit('delete')"
         >删除</el-button

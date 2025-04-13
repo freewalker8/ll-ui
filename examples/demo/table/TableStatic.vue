@@ -54,14 +54,11 @@
         :loading="toolBarLoading"
         :keyword.sync="query.keyword"
         @search="handlerSearch"
+        @reset="resetTable"
+        @clear="clearAllSelection"
         @add="handlerAdd"
         @delete="handlerWarpper(handlerDelete, selection)"
       ></tool-bar>
-
-      <div style="margin-bottom: 20px">
-        <el-button type="primary" size="small" @click="resetTable">重置表格</el-button>
-        <el-button type="primary" size="small" @click="clearAllSelection">清除选中数据</el-button>
-      </div>
     </template>
 
     <template slot="extra">这是附加内容</template>
@@ -101,13 +98,13 @@
     components: { ToolBar },
     data() {
       return {
-        fixHeight: 200,
+        fixHeight: 150,
         expandRowKeys: ['1'],
         selectedColumns: [],
         params: {},
         pageSize: 10,
         currentPage: 1,
-        selections: [1, '1_1', 3, 5],
+        selections: ['1', '1_1', '3', '5'],
         data: [
           {
             name: 'stone',
@@ -313,9 +310,6 @@
     },
     created() {
       this.$on('delete', this.handlerDelete);
-      setTimeout(() => {
-        this.fixHeight = 400;
-      }, 2000);
     },
     methods: {
       handlerWarpper(func, scope) {
