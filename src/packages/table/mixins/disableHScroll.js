@@ -45,7 +45,7 @@ export default {
     // 操作列的prop属性值，用于过滤操作（不能隐藏操作列）
     operateColumnProps: {
       type: Array,
-      default: () => ['action', 'expand']
+      default: () => ['action', 'expand', 'selection'] // 动作列， 展开列， 选择列
     }
   },
   data() {
