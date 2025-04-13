@@ -349,20 +349,20 @@ export default {
 
       const { selection, innerExpandRowKeys, paginationSelectable } = this;
 
-      // 勾选行
-      if (selection.length || paginationSelectable) {
-        this._clearPageSelection();
-        this.$nextTick(() => {
-          this._checkRows(paginationSelectable ? this.allSelection : selection);
-        });
-      }
-
       // 展开行
       if (innerExpandRowKeys.length) {
         this.$nextTick(() => {
           this.toggleRowsExpansion(innerExpandRowKeys);
         });
       }
+
+      // 勾选行
+      this.$nextTick(() => {
+        if (selection.length || paginationSelectable) {
+          this._clearPageSelection();
+          this._checkRows(paginationSelectable ? this.allSelection : selection);
+        }
+      });
     },
     expandRows: {
       deep: true,
@@ -985,7 +985,7 @@ export default {
 
       // 标记选中项
       rows.forEach(row => {
-        const { children } = this;
+        const { children } = row;
         const rowId = getRowIdentity(row, rowKey);
         const checked = selections.includes(rowId);
 
