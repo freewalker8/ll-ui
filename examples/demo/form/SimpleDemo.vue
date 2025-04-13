@@ -13,7 +13,7 @@
 <script>
   import { LlForm } from 'll-form-table';
   export default {
-    name: 'FormDemo',
+    name: 'SimpleDemo',
     components: { LlForm },
     data() {
       return {
