@@ -279,7 +279,7 @@
                 />
                 <el-button
                   size='mini'
-                  icon='el-icon-buttom'
+                  icon='el-icon-bottom'
                   title='下移'
                   circle
                   {...{
