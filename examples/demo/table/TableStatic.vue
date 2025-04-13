@@ -7,7 +7,7 @@
  * @Description: 静态表格
 -->
 <template>
-  <ll-table
+  <ll-table-static
     ref="table"
     border
     :row-key="'id'"
@@ -31,10 +31,10 @@
     :layout="'tool, pagination, table, pagination'"
     :row-draggable="true"
     :expand-rows.sync="expandRowKeys"
-    :fix-height="fixHeight"
+    :fix-height="200"
     :deep-select="false"
     :selection.sync="selections"
-    :page-size="pageSize"
+    :page-size="10"
     :current-page.sync="currentPage"
     :column-filter-selected="selectedColumns"
     :column-filter-always-selected="['name']"
@@ -88,7 +88,7 @@
         <span class="src-info-value">test--{{ row.name }}</span>
       </template>
     </el-table-column>
-  </ll-table>
+  </ll-table-static>
 </template>
 
 <script>
@@ -98,11 +98,9 @@
     components: { ToolBar },
     data() {
       return {
-        fixHeight: 150,
         expandRowKeys: ['1'],
         selectedColumns: [],
         params: {},
-        pageSize: 10,
         currentPage: 1,
         selections: ['1', '1_1', '3', '5'],
         data: [
@@ -402,3 +400,9 @@
     }
   };
 </script>
+
+<style lang="scss" scoped>
+  ::v-deep .ll-table__table {
+    margin: 15px 0;
+  }
+</style>
