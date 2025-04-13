@@ -33,7 +33,7 @@ npm install ll-form-table
 
 ```js
 import Vue from 'vue';
-import LlUI, { LlFrom, LlTable, LlTableStatic, useTable } from 'll-form-table';
+import LlFormTable, { LlFrom, LlTable, LlTableStatic, useTable } from 'll-form-table';
 
 // 全局注册表单
 Vue.use(LlForm);
@@ -45,8 +45,8 @@ Vue.use(LlTableStatic);
 // 当同时注册LlTable和LlTableStatic时，可以使用useTable快捷注册这两个组件
 Vue.use(useTable);
 
-// 全部注册
-Vue.use(LlUI);
+// 全部注册，同时注册表单、表格
+Vue.use(LlFormTable);
 ```
 
 ### 示例
