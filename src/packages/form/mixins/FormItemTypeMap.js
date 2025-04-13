@@ -415,7 +415,7 @@ export default {
     _markEffectedField(path) {
       const effectedFields = this.effectMap[path];
       if (effectedFields) {
-        this.forItems.map(item => {
+        this.forItems.forEach(item => {
           const { prop } = item;
           if (effectedFields.includes(prop)) {
             item.effected = true;
