@@ -978,7 +978,7 @@ export default {
     /**
      * 选中表格数据
      * @param {Array<String>} selections 待选中的row-key集合
-     * @param {Array<Object>} rows 表格数据对象数组
+     * @param {Array<Object>} [rows = this.curTableData] 表格数据对象数组
      */
     _checkRows(selections, rows = this.curTableData) {
       const { paginationSelectable, rowKey } = this;
@@ -1355,10 +1355,10 @@ export default {
                   : this.innerPaginationProps.layout
               },
               on: {
-                'size-change': this.handleSizeChange,
-                'prev-click': this.handlePrevClick,
-                'next-click': this.handleNextClick,
-                'current-change': this.handleCurrentChange
+                'size-change': this._handleSizeChange,
+                'prev-click': this._handlePrevClick,
+                'next-click': this._handleNextClick,
+                'current-change': this._handleCurrentChange
               }
             }}>
             {
