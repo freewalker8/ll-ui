@@ -624,12 +624,16 @@ export default {
      */
     _initPaginationProps() {
       if (this.paginationShow) {
-        const { paginationProps } = this;
+        const { paginationProps, data } = this;
         const { pageSize, currentPage } = paginationProps;
         const innerPaginationProps = {
           ...DefaultProps.paginationProps,
           ...paginationProps
         };
+
+        if (data.length) {
+          this.innerTotal = data.length;
+        }
 
         // 如果通过current-page属性设置了currentPage则更新当前页配置信息
         currentPage && (this.innerCurrentPage = currentPage);
