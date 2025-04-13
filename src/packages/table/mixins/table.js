@@ -1265,8 +1265,8 @@ export default {
       tool: this.toolBarShow ? (
         <div class='ll-table__toolBar'>
           {this.$scopedSlots['tool']({
-            selection: this.innerSelection,
-            selectionData: this.innerSelectionData,
+            selection: this.pageSelection,
+            selectionData: this.pageSelectionData,
             allSelection: this.allSelection,
             allSelectionData: this.allSelectionData,
             params: this.innerParams || {}
