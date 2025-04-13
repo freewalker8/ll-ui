@@ -5,19 +5,19 @@ function resolve(dir) {
 }
 
 const externals = {
-  vue: 'Vue',
+  vue: {
+    commonjs: 'vue',
+    commonjs2: 'vue',
+    amd: 'Vue',
+    root: 'Vue'
+  },
   axios: {
     commonjs: 'axios',
     commonjs2: 'axios',
     amd: 'axios',
-    root: 'Axios'
+    root: 'axios'
   },
-  'lodash-es': {
-    commonjs: 'lodash-es',
-    commonjs2: 'lodash-es',
-    amd: 'lodash-es',
-    root: 'lodash-es'
-  },
+  'lodash-es': 'lodash-es',
   sortablejs: {
     commonjs: 'sortablejs',
     commonjs2: 'sortablejs',
