@@ -45,7 +45,7 @@ export default {
     // 操作列的prop属性值，用于过滤操作（不能隐藏操作列）
     operateColumnProps: {
       type: Array,
-      default: () => ['action']
+      default: () => ['action', 'expand']
     }
   },
   data() {
@@ -104,8 +104,8 @@ export default {
     handleTableResize() {
       this.$nextTick(async () => {
         if (!this.tableWarpDom) return;
-        const overflowWidth = this._getHorizontalOverflowScrollWidth(this.tableWarpDom);
         const isEnlarge = this.tableWarpDom.clientWidth > this.tableWarpDomWidth;
+        const overflowWidth = this._getHorizontalOverflowScrollWidth(this.tableWarpDom);
 
         const displayColumns = this._calcDisplayColumns(overflowWidth, isEnlarge);
         this.tableColumns = displayColumns;
