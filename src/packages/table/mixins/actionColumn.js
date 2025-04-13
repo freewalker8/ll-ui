@@ -23,59 +23,59 @@ export default {
           render: null
         };
       }
+    }
+  },
+  computed: {
+    // 是否展示操作列
+    showActionColumn() {
+      const { buttons, render } = this.innerActionColumn;
+      return buttons.length > 0 || isFunction(render);
     },
-    computed: {
-      // 是否展示操作列
-      showActionColumn() {
-        const { buttons, render } = this.innerActionColumn;
-        return buttons.length > 0 || isFunction(render);
-      },
-      // 操作列配置
-      innerActionColumn() {
-        let baseOrder = 100;
-        const { $slots } = this;
-        let { label, ...actionColumn } = this.actionColumn;
-        // 收集通过actions插槽定义的操作列按钮
-        const templateActions = ($slots.columnActions || [])
-          .filter(t => t.componentOptions && t.componentOptions.tag === 'el-button')
-          .map(button => {
-            const { componentOptions, data } = button;
-            const { propsData = {}, children, listeners = {} } = componentOptions;
-            let { click: hanlder } = listeners;
-            const { attrs } = data;
-            let label = '';
+    // 操作列配置
+    innerActionColumn() {
+      let baseOrder = 100;
+      const { $slots } = this;
+      let { label, ...actionColumn } = this.actionColumn;
+      // 收集通过actions插槽定义的操作列按钮
+      const templateActions = ($slots.columnActions || [])
+        .filter(t => t.componentOptions && t.componentOptions.tag === 'el-button')
+        .map(button => {
+          const { componentOptions, data } = button;
+          const { propsData = {}, children, listeners = {} } = componentOptions;
+          let { click: hanlder } = listeners;
+          const { attrs } = data;
+          let label = '';
 
-            // 按钮包含文本，只支持文本作为按钮的模板
-            if (children && children.length) {
-              label = children[0].text;
-            }
-
-            // 组装成buttons属性接受的按钮配置对象
-            return { props: propsData, ...attrs, label, hanlder };
-          });
-
-        let { buttons = [] } = actionColumn;
-
-        // 插槽定义的按钮放置到buttons属性配置的按钮前面
-        buttons = [...templateActions, ...buttons].map(b => {
-          // 没设置order属性，设置一个默认的order属性
-          if (!b.order) {
-            b.order = ++baseOrder;
+          // 按钮包含文本，只支持文本作为按钮的模板
+          if (children && children.length) {
+            label = children[0].text;
           }
 
-          return b;
+          // 组装成buttons属性接受的按钮配置对象
+          return { props: propsData, ...attrs, label, hanlder };
         });
 
-        actionColumn.buttons = sortObjectArrayByProp(buttons, 'order');
+      let { buttons = [] } = actionColumn;
 
-        return merge(
-          {
-            show: true,
-            props: { label: label || '操作' }
-          },
-          actionColumn
-        );
-      }
+      // 插槽定义的按钮放置到buttons属性配置的按钮前面
+      buttons = [...templateActions, ...buttons].map(b => {
+        // 没设置order属性，设置一个默认的order属性
+        if (!b.order) {
+          b.order = ++baseOrder;
+        }
+
+        return b;
+      });
+
+      actionColumn.buttons = sortObjectArrayByProp(buttons, 'order');
+
+      return merge(
+        {
+          show: true,
+          props: { label: label || '操作' }
+        },
+        actionColumn
+      );
     }
   },
   data() {
