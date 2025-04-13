@@ -1328,12 +1328,12 @@ export default {
               this.tableColumns.map(prop => {
                 return _renderColumn(h, prop);
               })}
+            {this._renderActionColumn(h)}
+            {this._renderFilterForm(h)}
             {/* empty slot */}
             {_renderEmptySlot()}
             {/* append slot */}
             {this.$slots.append}
-            {this._renderActionColumn(h)}
-            {this._renderFilterForm(h)}
           </el-table>
         </div>
       ),
