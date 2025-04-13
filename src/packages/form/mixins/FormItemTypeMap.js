@@ -102,7 +102,7 @@ export default {
           return (
             <el-select {...componentConfig}>
               {options.map(opt => {
-                isGroupSelect && Array.isArray(opt[childrenOptionsKey]) ? (
+                return isGroupSelect && Array.isArray(opt[childrenOptionsKey]) ? (
                   <el-option-group key={opt.label} label={opt.label}>
                     {opt[childrenOptionsKey].map(subOpt => (
                       <el-option key={subOpt.value} {...{ attrs: subOpt }}></el-option>
