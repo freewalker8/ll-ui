@@ -2,7 +2,7 @@
  * @Author: lianglei stone.ll@qq.com
  * @Date: 2025-04-10 09:02:36
  * @LastEditors: lianglei stone.ll@qq.com
- * @LastEditTime: 2025-04-10 18:18:51
+ * @LastEditTime: 2025-04-14 17:08:05
  * @FilePath: \ll-form-table\docs\form.md
  * @Description: 表单使用文档
 -->
@@ -273,7 +273,7 @@ export default {
 ```ts
 let formItems = FormItem[];
 
-declare type FormItem = {
+interface FormItem {
   // 扩展的属性
   type: FormItemType; // 表单元素类型
   order?: Number, // 排序，升序排列
@@ -358,7 +358,7 @@ declare type FormItemType = 'input' |
   'step' // 标记未分步表单的步骤 
 
 // 表单元素配置信息
-declare type FormItemConfig = {
+interface FormItemConfig {
   width?: string | number, // 表单元素宽度，未设置时该值会从组件的width属性继承。组件width属性的默认值为100%，即占满整行
   options?: Array<Object|String>, // 选项类型的表单元素的可选项，如select、radio、checkbox等支持配置该属性
   // 支持对el-input配置vue组件属性对象
@@ -386,3 +386,77 @@ declare type FormItemConfig = {
 表单对部分表单项进行了扩展，详情参见：[5.8 部分表单项组件说明](#58-部分表单项组件说明)
 
 #### 5.1.2 表单项render渲染函数
+
+通常使用`type`属性选择组件支持的表单项类型并通过`formElementProps`属性配置表单元素的属性就可满足表单项定义的需求。但有时业务场景较复杂，配置项已经不满足需求，这时可以使用`render`渲染函数自定义表单项。
+
+::: tip
+`render`的优先级大于`type`表单项类型配置，设置了`render`的表单项将不会使用`type`配置的表单项类型，而是使用`render`渲染函数自定义的表单项，同时`formElementProps`属性将不会生效，因为`render`渲染函数完全控制了表单项的渲染。
+`。
+:::
+
+eg:
+
+```js
+const formItems = [
+  {
+    prop: 'nickname',
+    label: '昵称',
+    render: () => {
+      return (
+        <el-input
+          type='text'
+          placeholder='昵称'
+          size='small'
+          {...{
+            props: {
+              value: this.formData.nickname
+            },
+            on: {
+              input: val => {
+                this.formData.nickname = val;
+              }
+            }
+          }}></el-input>
+      );
+    }
+  }
+]
+```
+
+#### 5.1.3 注册自定义的UI渲染类型
+
+通过`render`自定义渲染表单项的方法能解决自定义表单项的问题，但存在一个问题就是不能复用，必须在每个表单配置项里面配置`render`。
+
+如果希望复用，可以通过注册自定义的UI渲染类型来实现。
+
+提供了`addUIType`和`addUITypes`两个方法来扩展表单组件支持的`type`类型，以便一次注册，全局使用，设置表单配置项的`type`属性即可。
+
+##### 5.1.3.1 addUIType
+
+扩展组件支持的UI type，接受两个参数：
+
+- `uiType: String` UI类型的名称
+- `render: Function(h, dataObj: Object): jsx` UI类型的渲染函数，render函数接受两个参数：h为Vue的createElement函数，dataObj为表单项配置信息对象，返回值是UI类型的jsx。
+
+##### 5.1.3.2 addUITypes
+
+批量扩展组件支持的UI types，接受一个对象数组作为参数：
+
+- `uiTypes: Array<{ uiType: String, render: Function(h, dataObj: Object): jsx }>` UI类型的名称和渲染函数的集合
+
+eg:
+
+```js
+import { addUIType, addUITypes } from 'll-form-table';
+
+addUIType('my-input', (h, dataObj) => {
+  return <custom-input {...dataObj}></custom-input>
+});
+
+// 批量注册UI类型
+addUITypes([
+  { uiType: 'my-input', render: (h, dataObj) => <custom-input {...dataObj}></custom-input> },
+])
+```
+
+#### 5.1.4表单项UI渲染类型dialog
