@@ -13,5 +13,5 @@ module.exports = {
     commonjs: 'll-form-table/table',
     commonjs2: 'll-form-table/table',
     root: ['LlFormTable', 'Table']
-  },
+  }
 };
