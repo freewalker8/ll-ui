@@ -26,21 +26,20 @@
     - [5.1.3．注册自定义的UI渲染类型](#513﹣注册自定义的UI渲染类型) 
       - [5.1.3.1. addUIType](#5131-addUIType) 
       - [5.1.3.2. addUITypes](#5132-addUITypes) 
-    - [5.1.4．表单项UI渲染类型dialog](#514﹣表单项UI渲染类型dialog) 
-    - [5.1.5．异步获取表单值回填表单](#515﹣异步获取表单值回填表单) 
-    - [5.1.6．动态绑定表单项的值](#516﹣动态绑定表单项的值) 
-    - [5.1.7．动态获取表单项的可选值](#517﹣动态获取表单项的可选值) 
-    - [5.1.8．下拉选框el-select组件支持远程搜索](#518﹣下拉选框el-select组件支持远程搜索) 
-    - [5.1.9．动态增减表单项](#519﹣动态增减表单项) 
-    - [5.1.10．给表单项设置气泡提示](#5110﹣给表单项设置气泡提示) 
-    - [5.1.11．分步表单](#5111﹣分步表单) 
-    - [5.1.12．表单项值的联动](#5112﹣表单项值的联动) 
-    - [5.1.13，设置隐藏字段](#5113﹣设置隐藏字段) 
-    - [5.1.14．表单查看模式自定义表单项展示内容](#5114﹣表单查看模式自定义表单项展示内容) 
-    - [5.1.15．表单嵌套](#5115﹣表单嵌套) 
-    - [5.1.16．不展示表单项label](#5116﹣不展示表单项label) 
-    - [5.1.17．自定义表单项label](#5117﹣自定义表单项1abel) 
-    - [5.1.18．将表单绑定值转为FormData](#5118﹣将表单绑定值转为FormData) 
+    - [5.1.4．异步获取表单值回填表单](#514﹣异步获取表单值回填表单) 
+    - [5.1.5．动态绑定表单项的值](#515﹣动态绑定表单项的值) 
+    - [5.1.6．动态获取表单项的可选值](#516﹣动态获取表单项的可选值) 
+    - [5.1.7．下拉选框el-select组件支持远程搜索](#517﹣下拉选框el-select组件支持远程搜索) 
+    - [5.1.8．动态增减表单项](#518﹣动态增减表单项) 
+    - [5.1.9．给表单项设置气泡提示](#519﹣给表单项设置气泡提示) 
+    - [5.1.10．分步表单](#5110﹣分步表单) 
+    - [5.1.11．表单项值的联动](#5111﹣表单项值的联动) 
+    - [5.1.12，设置隐藏字段](#5112﹣设置隐藏字段) 
+    - [5.1.13．表单查看模式自定义表单项展示内容](#5113﹣表单查看模式自定义表单项展示内容) 
+    - [5.1.14．表单嵌套](#5114﹣表单嵌套) 
+    - [5.1.15．不展示表单项label](#5115﹣不展示表单项label) 
+    - [5.1.16．自定义表单项label](#5116﹣自定义表单项1abel) 
+    - [5.1.17．将表单绑定值转为FormData](#5117﹣将表单绑定值转为FormData) 
   - [5.2．表单校验](#52﹣表单校验) 
     - [5.2.1. registerValidateType校验类型注册函数](#521-registerValidateType校验类型注册函数)
     - [5.2.2.validator基于正则的校验函数](#522-validator基于正则的校验函数) 
@@ -58,8 +57,7 @@
   - [5.6．表单项分组](#56﹣表单项分组) 
   - [5.7．默认的提交按钮不可点击](#57﹣默认的提交按钮不可点击) 
   - [5.8．部分表单项组件说明](#58﹣部分表单项组件说明) 
-    - [5.8.2．树形输入组件（treeInput)](#582﹣树形输入组件（treeInput)) 
-    - [5.8.1．上传组件（upload)](#581﹣上传组件（upload)) 
+    - [5.8.1．上传组件upload](#581﹣上传组件upload)
 - [6．组件属性说明](#6﹣组件属性说明)
 - [7. 组件事件说明](#7﹣组件事件说明)
 - [8．组件插槽说明](#8﹣组件插槽说明)
@@ -352,7 +350,6 @@ declare type FormItemType = 'input' |
   'rate' | 
   'colorPicker' |
   'transfer' |
-  'dialog' |
   // 下面的类型不作为表单项UI类型使用
   'group' | // 表单分组类型，和上面的类型不同，不是特定的UI类型，用于表面这是一个表单项的分组节点，用于包裹表单项
   'step' // 标记未分步表单的步骤 
@@ -459,4 +456,454 @@ addUITypes([
 ])
 ```
 
-#### 5.1.4表单项UI渲染类型dialog
+#### 5.1.4．异步获取表单值回填表单
+
+从接口获取表单的绑定数据，将数据绑定到表单。异步获取并绑定数据的方式有3种：
+
+1、异步获取表单数据，绑定到`model`属性。
+
+eg:
+
+```html
+<template>
+  <ll-form :formItems="formItems" :model="formData"></ll-form>
+</template>
+
+<script>
+export default {
+  data() {
+    formItems: [],
+    formData: {}
+  },
+  created() {
+    fetchData().then(data => {
+      formData = data;
+    })
+  }
+}
+</script>
+```
+
+2、通过`get-data`属性传入数据获取函数来获取表单数据并绑定。
+
+::: tip
+`get-data`属性配置的函数应通过`Promise`返回一个可绑定对象作为表单数据。
+:::
+
+eg:
+
+```html
+<template>
+  <ll-form :formItems="formItems" :model="formData" :get-data="getData"></ll-form>
+</template>
+
+<script>
+export default {
+  data() {
+    formItems: [{ prop: 'name', type: 'input', label: 'name' }],
+    formData: {}
+  },
+  methods: {
+    getData() {
+      return new Promise(resolve => { name: 'stone' })
+    }
+  }
+}
+</script>
+```
+
+2、通过`get-data`属性传入接口来获取表单数据并绑定。
+
+::: tip
+需要通过`http`属性值配置的`http`实例来发送请求。所以需要先配置`http`实例。
+
+`get-data`属性配置的接口应通过`Promise`返回一个`{ data: Object, code: 0 }`的对象，`data`作为表单数据。
+:::
+
+eg:
+
+```html
+<template>
+  <ll-form :formItems="formItems" :model="formData" :get-data="'/api/user/1'" :http="httpIns"></ll-form>
+</template>
+
+<script>
+export default {
+  data() {
+    formItems: [{ prop: 'name', type: 'input', label: 'name' }],
+    formData: {}
+  }
+}
+</script>
+
+
+#### 5.1.5．动态绑定表单项的值
+
+表单项的值是通过接口获取时，可以使用`fetchData`属性配置来从接口获取数据，返回的数据会回填到表单项中。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'customInput',
+    label: 'customInput',
+    prop: 'name',
+    tips: 'customInput',
+    fetchData: () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve('async data');
+        }, 1000);
+      });
+    }
+  }
+]
+```
+
+#### 5.1.6．动态获取表单项的可选值
+
+对于有options配置项的表单项，如`select,radioGroup,checkboxGroup`等，可通过`fetchOptions`属性动态的从接口获取可选数据。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'select',
+    label: '职级',
+    prop: 'level',
+    span: 12,
+    // 通过promise返回可选项
+    fetchOptions: () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          return resolve([
+            { label: 'Tester', value: '3' },
+            { label: 'Java developer', value: '2' },
+            { label: 'Web Developer', value: '1' },
+            { label: 'UI', value: '0' }
+          ]);
+        }, 2000);
+      });
+    },
+    formElementProps: {
+      placeholder: '职级',
+      options: [], // init options, nessessary
+      class: 'customClassLevel'
+    }
+  }
+]
+```
+
+#### 5.1.7．下拉选框el-select组件支持远程搜索
+
+可选项太多时，支持搜索。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'select',
+    label: '职级',
+    prop: 'level',
+    span: 12,
+    formElementProps: {
+      placeholder: '职级',
+      options: [], // init options, nessessary
+      class: 'customClassLevel',
+      // 支持远程搜索
+      remote: true,
+      remoteMethod: query => {
+        console.log('remoteMethod', query);
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve([
+              { label: 'Tester', value: '3' },
+              { label: 'Java developer', value: '2' },
+              { label: 'Web Developer', value: '1' },
+              { label: 'UI', value: '0' }
+            ]);
+          }, 2000);
+        });
+      }
+    }
+  }
+]
+```
+
+#### 5.1.8．动态增减表单项
+
+可通过动态的修改`form-items`属性的绑定值来实现。
+
+eg:
+
+```js
+export default {
+  data() {
+    formItems: []
+  },
+  created() {
+    this.formItems.push({
+      type: 'input',
+      label: '爱好',
+      prop: 'fav',
+      span: 24,
+      formElementProps: {
+        type: 'textarea',
+        placeholder: '请输入爱好'
+      }
+    });
+  }
+}
+```
+
+#### 5.1.9．给表单项设置气泡提示
+
+可通过表单组件的`tips-effect`属性设置气泡主题，可选值有`dark`和`light`。
+
+在表单项配置里面设置`tips`属性来配置提示内容。
+
+eg:
+
+```js
+const formItems = [
+  tips: '请输入昵称',
+  type: 'input',
+  label: '昵称',
+  prop: 'nickname'
+]
+```
+
+#### 5.1.10．分步表单
+
+通过表单的`step`属性来开启分步表单，值为`true`时开启。
+
+表单项通过`type='step'`来配置表单为分步表单的一个步骤，使用`children`来定义当前步骤里面的表单项。
+
+通过`step-attrs`属性配置步骤栏组件的属性，可配置属性和`el-steps`的属性一致。
+
+在表单项里面可以配置`el-step`的属性来定义步骤的属性。
+
+eg:
+
+```html
+<template>
+  <ll-form
+    :step="true"
+    :step-attrs="stepAttrs"
+    :steps-position="'top'"
+    :active-step="0"
+    :form-items="formItems"
+    :model="formData"
+    :rules="rules"
+    :post-data="submitForm"
+    button-position="center"
+    label-width="100px"
+    class="ll-form-warp"
+  ></ll-form>
+</template>
+
+<script>
+import { LlForm } from 'll-form-table';
+export default {
+  name: 'SimpleDemo',
+  components: { LlForm },
+  data() {
+    return {
+      // el-steps的属性配置
+      stepAttrs: {
+        space: '100%',
+        direction: 'horizontal',
+        active: 0, // 优先级高于组件属性active-step配置
+        finishStatus: 'success'
+      },
+      formItems: [
+        {
+          type: 'step', // 表单为分步表单的一个步骤
+          title: '基础信息', // el-step的属性配置
+          icon: 'el-icon-edit', // el-step的属性配置
+          description: '用户基础ixnx', // el-step的属性配置
+          // 当前步骤的表单项
+          children: [
+            { type: 'input', label: '账号', prop: 'account' },
+            {
+              type: 'input',
+              label: '昵称',
+              prop: 'nickname',
+              tips: '请输入昵称'
+            },
+            {
+              type: 'inputNumber',
+              label: '年龄',
+              prop: 'age',
+              formElementProps: {
+                // width: 200,
+                min: 1,
+                max: 200,
+                step: 1,
+                placeholder: '年龄'
+              }
+            },
+            {
+              type: 'select',
+              label: '头衔',
+              prop: 'title',
+              formElementProps: {
+                placeholder: '头衔',
+                options: [
+                  { label: 'Tester', value: '3' },
+                  { label: 'Java developer', value: '2' },
+                  { label: 'Web Developer', value: '1' }
+                ],
+                loading: false,
+                filterable: true,
+                multiple: true
+              }
+            }
+          ]
+        },
+        {
+          type: 'step',
+          // el-step的属性配置
+          title: '教育信息',
+          icon: '',
+          description: '教育经历',
+          children: [
+            {
+              type: 'input',
+              label: '高中',
+              prop: 'edu.highSchool',
+              formElementProps: {
+                placeholder: '高中'
+              }
+            },
+            {
+              type: 'input',
+              label: '大学',
+              prop: 'edu.university',
+              formElementProps: {
+                placeholder: '大学'
+              }
+            }
+          ]
+        }
+      ],
+      formData: {
+        account: 'stone',
+        nickname: 'stone',
+        age: 18,
+        title: [],
+        edu: {
+          highSchool: '',
+          university: ''
+        }
+      },
+      rules: {
+        account: [
+          { required: true, message: '请输入账号', trigger: 'blur' },
+          {
+            trigger: 'change',
+            validator: (rule, value, callback) => {
+              if (/^[a-zA-Z0]+$/.test(value)) {
+                callback();
+              } else {
+                callback(new Error('只能输入字母，不能为空'));
+              }
+            }
+          }
+        ],
+        nickname: [
+          { required: true, message: '请输入昵称', trigger: 'change' },
+          { min: 3, message: '昵称长度至少为3个字符', trigger: 'change' }
+        ]
+      },
+      formLoading: false
+    };
+  },
+  methods: {
+    submitForm(formData) {
+      console.log('formData', formData);
+      this.formLoading = true;
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.formLoading = false;
+          this.$message.success('提交成功');
+          resolve('success');
+        }, 1500);
+      });
+    }
+  }
+};
+</script>
+
+```
+
+渲染结果如下所示：
+
+![step-form](./img/step-form.png)
+
+#### 5.1.11．表单项值的联动
+
+
+#### 5.1.12，设置隐藏字段
+
+#### 5.1.13．表单查看模式自定义表单项展示内容
+
+
+#### 5.1.14．表单嵌套
+
+#### 5.1.15．不展示表单项label
+
+
+#### 5.1.16．自定义表单项label
+
+
+#### 5.1.17．将表单绑定值转为FormData
+
+
+### 5.2．表单校验
+
+#### 5.2.1. registerValidateType校验类型注册函数
+
+
+#### 5.2.2.validator基于正则的校验函数
+
+### 5.3．如何提交表单数据
+
+
+#### 5.3.1．通过给post-data属性配置一个回调函数实现
+
+#### 5.3.2．通过监听submit事件实现
+
+#### 5.3.3．自定义表单操作栏来实现
+
+#### 5.3.4．通过给post-data属性配置一个数据提交接口来实现
+
+
+#### 5.3.5，编辑模式时不提交不可编辑的表单项的值
+
+#### 5.3.6．编辑模式时不提交值未改变的表单项的值
+
+#### 5.3.7．回车提交表单
+
+### 5.4．自定义表单按钮
+
+#### 5.4.1．表单按钮属性
+
+### 5.5，表单查看模式
+
+### 5.6．表单项分组
+
+### 5.7．默认的提交按钮不可点击
+
+### 5.8．部分表单项组件说明
+
+#### 5.8.1．上传组件upload
+
+## 6．组件属性说明
+
+## 7. 组件事件说明
+
+## 8．组件插槽说明
