@@ -28,96 +28,96 @@ import { serialize } from 'v8';
 </template>
 
 <script>
-  export default {
-    name: 'ToolBar',
-    props: {
-      loading: {
-        type: Object,
-        default() {
-          return {
-            deleteLoading: false,
-            searchLoading: false
-          };
-        }
-      },
-      keyword: {
-        type: String,
-        default: ''
+export default {
+  name: 'ToolBar',
+  props: {
+    loading: {
+      type: Object,
+      default() {
+        return {
+          deleteLoading: false,
+          searchLoading: false
+        };
       }
     },
-    data() {
-      return {
-        innerKeyword: '',
-        innerSearchLoading: false,
-        innerDeleteLoading: false
-      };
-    },
-    watch: {
-      loading: {
-        deep: true,
-        immediate: true,
-        handler(newVal) {
-          this.innerSearchLoading = newVal.searchLoading;
-          this.innerDeleteLoading = newVal.deleteLoading;
-        }
-      },
-      keyword: {
-        immediate: true,
-        handler(newVal) {
-          this.innerKeyword = newVal;
-        }
+    keyword: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      innerKeyword: '',
+      innerSearchLoading: false,
+      innerDeleteLoading: false
+    };
+  },
+  watch: {
+    loading: {
+      deep: true,
+      immediate: true,
+      handler(newVal) {
+        this.innerSearchLoading = newVal.searchLoading;
+        this.innerDeleteLoading = newVal.deleteLoading;
       }
     },
-    methods: {
-      handlerSearch() {
-        this.$emit('search', this.innerKeyword);
-        this.$emit('update:keyword', this.innerKeyword);
+    keyword: {
+      immediate: true,
+      handler(newVal) {
+        this.innerKeyword = newVal;
       }
     }
-  };
+  },
+  methods: {
+    handlerSearch() {
+      this.$emit('search', this.innerKeyword);
+      this.$emit('update:keyword', this.innerKeyword);
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  .ll-table-toolbar {
-    margin-bottom: 15px;
-    overflow: hidden;
+.ll-table-toolbar {
+  margin-bottom: 15px;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  &::after {
+    content: '';
+    clear: both;
+  }
+
+  &__action {
+    display: inline-block;
+    margin-right: 15px;
+    flex: 1;
+  }
+
+  &__search {
     display: flex;
-    justify-content: space-between;
-    &::after {
-      content: '';
-      clear: both;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+
+    .el-button {
+      &.el-button--small {
+        height: 32px;
+      }
     }
 
-    &__action {
-      display: inline-block;
-      margin-right: 15px;
-      flex: 1;
+    .width-200 {
+      flex-basis: 166px;
+      flex-grow: 1;
+      max-width: 200px;
     }
 
-    &__search {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      flex: 1;
-
-      .el-button {
-        &.el-button--small {
-          height: 32px;
-        }
-      }
-
-      .width-200 {
-        flex-basis: 166px;
-        flex-grow: 1;
-        max-width: 200px;
-      }
-
-      & > * {
-        margin-right: 10px;
-      }
-      & > .el-button {
-        margin-right: 0;
-      }
+    & > * {
+      margin-right: 10px;
+    }
+    & > .el-button {
+      margin-right: 0;
     }
   }
+}
 </style>

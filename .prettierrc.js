@@ -21,6 +21,6 @@ module.exports = {
   proseWrap: 'preserve', // always|never|preserve
   Parser: 'babel',
   htmlWhitespaceSensitivity: 'strict', // html空白敏感
-  vueIndentScriptAndStyle: true, // vue文件script和style标签缩进
+  vueIndentScriptAndStyle: false, // vue文件script和style标签缩进
   // endOfLine: 'lf'
 };

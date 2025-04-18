@@ -23,6 +23,8 @@ module.exports = {
     "no-console": "off",
     "no-debugger": process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "no-unused-vars": "off",
+    "vue/script-indent": "off",
+    "vue/style-indent": "off",
     "vue/require-default-prop": "off"
   },
 
