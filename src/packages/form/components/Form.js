@@ -38,16 +38,6 @@ export function filterUseableFormItem(formItem) {
   return formItem && Object.keys(formItem).length > 0;
 }
 
-window.llFormSetValue = function(value) {
-  const inputId = window.sessionStorage.getItem('ll-form-opener-input-id');
-  const el = document.getElementById(inputId);
-  el && (el.value = value);
-  Bus.$emit(UPDATE_OPENER_INPUT_EVENT, { value, prop: inputId.split('__')[1] });
-  // 关闭弹框
-  let { llFormOpenedWindow } = window;
-  llFormOpenedWindow && llFormOpenedWindow.close();
-};
-
 export default {
   name: 'LlForm',
   inheritAttrs: false,

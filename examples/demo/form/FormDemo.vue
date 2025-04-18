@@ -130,21 +130,6 @@ export default {
           }
         },
         {
-          type: 'dialog',
-          prop: 'dialog',
-          label: '定制弹框',
-          span: 12,
-          tips: '自定义弹框',
-          formElementProps: {
-            url: '/input.html',
-            dialogHeight: 200,
-            dialogWidth: 400,
-            top: 300,
-            placeholder: '点击打开弹框',
-            clearable: true
-          }
-        },
-        {
           type: 'inputNumber',
           label: '年龄',
           prop: 'age',
