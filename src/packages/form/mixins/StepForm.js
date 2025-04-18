@@ -31,7 +31,7 @@ export default {
       default: '下一步'
     },
     // 步骤条容器el-steps的属性配置，step = true时生效，支持的属性请参照element-ui的el-steps组件文档
-    stepAttrs: {
+    stepsAttrs: {
       type: Object,
       default() {
         return {};
@@ -103,22 +103,22 @@ export default {
      * @returns {JSX} 分步栏模板
      */
     _renderSteps(h) {
-      const { stepsConfig, stepAttrs, innerActiveStep, _handlerStepJump } = this;
+      const { stepsConfig, stepsAttrs, innerActiveStep, _handlerStepJump } = this;
       return (
         <el-steps
           {...{
             props: {
               active: innerActiveStep,
               processStatus: 'process',
-              ...stepAttrs
+              ...stepsAttrs
             },
             class: 'll-form__steps'
           }}>
-          {stepsConfig.map((stepAttrs, index) => {
+          {stepsConfig.map((stepProps, index) => {
             return (
               <el-step
                 {...{
-                  props: stepAttrs,
+                  props: stepProps,
                   nativeOn: {
                     click: () => {
                       _handlerStepJump(index);

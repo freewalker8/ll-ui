@@ -745,7 +745,7 @@ export default {
         stepsConfig,
         _handlerReset,
         _handlerSubmit,
-        _handerStep
+        _handlerStep
       } = this;
 
       // 判断是否显示操作按钮
@@ -782,7 +782,7 @@ export default {
         prevStep: (
           <el-button
             onClick={() => {
-              _handerStep(-1);
+              _handlerStep(-1);
             }}
             {...{
               props: innerSubmitButtonAttrs,
@@ -794,7 +794,7 @@ export default {
         nextStep: (
           <el-button
             onClick={() => {
-              _handerStep(1);
+              _handlerStep(1);
             }}
             {...{
               props: innerSubmitButtonAttrs,
