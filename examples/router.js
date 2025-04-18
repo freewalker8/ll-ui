@@ -25,6 +25,10 @@ const routes = [
     component: () => import('./demo/form/SimpleDemo.vue')
   },
   {
+    path: '/form/step',
+    component: () => import('./demo/form/StepForm.vue')
+  },
+  {
     path: '/form/custom-operate-button',
     component: () => import('./demo/form/CustomOperateButton.vue')
   },
