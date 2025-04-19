@@ -451,7 +451,12 @@ export default {
      */
     _getSortedFormItems(formItems) {
       const _formItems = formItems.filter(filterUseableFormItem); // 去除无意义的表单项配置
-      const newFormItems = cloneDeep(_formItems);
+      let newFormItems = [];
+      try {
+        newFormItems = cloneDeep(_formItems);
+      } catch (error) {
+        newFormItems = [..._formItems];
+      }
       const sortedItems = sortObjectArrayByProp(newFormItems, 'order');
       sortedItems.forEach(item => {
         const { children } = item;
