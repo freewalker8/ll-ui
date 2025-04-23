@@ -11,7 +11,9 @@
       <span><router-link :to="{ path: '/table/table-static' }">表格示例</router-link></span>
     </div>
     <div class="container">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
   </div>
 </template>
