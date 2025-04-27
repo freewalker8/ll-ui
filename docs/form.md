@@ -269,7 +269,7 @@ export default {
 #### 5.1.1 formItems的数据结构说明
 
 ```ts
-let formItems = FormItem[];
+declare const formItems = Array<FormItem>;
 
 interface FormItem {
   // 扩展的属性
@@ -323,7 +323,7 @@ interface FormItem {
 };
 
 // 表单项支持的表单元素类型，element-ui支持的表单项类型和派生的类型
-declare type FormItemType = 'input' | 
+type FormItemType = 'input' | 
   'inputNumber' | 
   'textarea' | 
   'select' | 
