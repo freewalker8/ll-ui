@@ -846,11 +846,119 @@ export default {
 
 #### 5.1.11．表单项值的联动
 
+一个表单项的绑定值会影响其它表单项的绑定值或可选值。在表单项的值改变时应清空受影响字段的绑定值或从新获取对应的可选值。
+
+这时可以通过配置表单项配置对象的`effect`属性来配置表单项的联动关系，表面哪些字段会受影响，需要清空绑定值或从新获取可选值。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'select',
+    label: '职位',
+    prop: 'role',
+    effect: ['level'], // 表示当职位选中项改变时，清空等级(level)字段的绑定值，重新获取等级(level)字段的可选值
+    formElementProps: {
+      placeholder: '职位',
+      options: [
+        { label: 'Tester', value: '3' },
+        { label: 'Java developer', value: '2' },
+        { label: 'Web Developer', value: '1' },
+        { label: 'UI', value: '0' }
+      ],
+      loading: false,
+      filterable: true,
+      multiple: false
+    }
+  },
+  {
+    type: 'select',
+    label: '职级',
+    prop: 'level',
+    span: 12,
+    // role绑定变更后触发重新执行 fetchOptions
+    fetchOptions: () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          // 可以根据选中的role来获取对应的可选值，当前示例将选中的role值附加到了level可选项的label后面展示
+          return resolve([
+            { label: 'Level3_' + this.formData.role || '', value: '3' },
+            { label: 'Level2_' + this.formData.role || '', value: '2' },
+            { label: 'Level1_' + this.formData.role || '', value: '1' },
+            { label: 'Level0_' + this.formData.role || '', value: '0' }
+          ]);
+        }, 1000);
+      });
+    },
+    formElementProps: {
+      placeholder: '职级',
+      options: [], // init options, nessessary
+      class: 'customClassLevel'
+    }
+  }
+]
+```
 
 #### 5.1.12，设置隐藏字段
 
+在某些场景表单项的`dom`需要渲染出来，但是不展示UI给用户，及是渲染`dom`但将`dom`的`visibility`属性设置为`hidden`。如用户ID，需要展示在`dom`里面方便获取但不展示给用户。
+
+这时就需要将字段设置为隐藏字段，通过配置表单项对象的`visible`属性,设置为`false`来实现，同时`visible`属性还可配置为函数，函数签名为`(formData: Object) => boolean`。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'input',
+    label: '用户ID',
+    prop: 'id',
+    visible: false // 设置为隐藏字段
+    // or
+    // 支持配置为函数来动态判断是否展示字段
+    visible: (formData: Object) => {
+      return !formData.isAdmin
+    }
+  }
+]
+```
+
 #### 5.1.13．表单查看模式自定义表单项展示内容
 
+有时表单绑定数据对象在提交数据时在表单里面的展示形态合在查看时的展示形态不同。
+
+如考试成绩，在提交时需要提交具体的分数，在展示时纪要展示分数又要展示分数标签（不及格，及格，良，优秀）。
+
+这时就可以通过配置表单项对象的`viewRender`属性来个性化展示表单项的值，`viewRender`为函数，函数签名为`() => VNode`。
+
+eg:
+
+```js
+const formItems = [
+  {
+    type: 'input',
+    label: '考试成绩',
+    prop: 'score',
+    // 自定义表单项展示内容
+    viewRender: () => {
+      const { score } = this.formData;
+      if (score >= 60 && score < 70) {
+        return <div>{score}<el-tag>及格</el-tag></div>
+      }
+      if (score >= 70 && score < 90) {
+        return <div>{score}<el-tag>良</el-tag></div>
+      }
+      if (score >= 90) {
+        return <div>{score}<el-tag>优秀</el-tag></div>
+      }
+      if (score < 60) {
+        return <div>{score}<el-tag>不及格</el-tag></div>
+      }
+    }
+  }
+]
+```
 
 #### 5.1.14．表单嵌套
 

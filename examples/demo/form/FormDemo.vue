@@ -201,10 +201,10 @@ export default {
             return new Promise(resolve => {
               setTimeout(() => {
                 return resolve([
-                  { label: 'Level3', value: '3' },
-                  { label: 'Level2', value: '2' },
-                  { label: 'Level1', value: '1' },
-                  { label: 'Level0', value: '0' }
+                  { label: 'Level3_' + this.formData.role || '', value: '3' },
+                  { label: 'Level2_' + this.formData.role || '', value: '2' },
+                  { label: 'Level1_' + this.formData.role || '', value: '1' },
+                  { label: 'Level0_' + this.formData.role || '', value: '0' }
                 ]);
               }, 2000);
             });
