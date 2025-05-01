@@ -371,10 +371,10 @@ export default {
     _markEffectedField(path) {
       const effectedFields = this.effectMap[path];
       if (effectedFields) {
-        this.forItems.forEach(item => {
+        this.innerFormItems.forEach(item => {
           const { prop } = item;
           if (effectedFields.includes(prop)) {
-            item.effected = true;
+            item.effected = true; // 标记表单项受影响了，需要更新表单项的值或可选项
           }
         });
       }

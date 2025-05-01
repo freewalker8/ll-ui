@@ -948,6 +948,7 @@ export default {
         }
 
         if (fetchData) {
+          // 受其它字段影响，重新获取表单项的值或者清楚表单项绑定值
           if (effected) {
             fetchCache.valuePromiseRef[prop] = fetchData().then(res => {
               this.$set(this.innerFormData, prop, res || '');
@@ -960,6 +961,10 @@ export default {
                 _saveInitedFormData(innerFormData);
               }));
           }
+        } else if (effected) {
+          // 清除表单项的值
+          this.$set(this.innerFormData, prop, '');
+          formItemConfig.effected = false; // 清除表单项的副作用标记
         }
 
         if (fetchOptions) {
