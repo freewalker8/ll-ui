@@ -893,8 +893,8 @@ export default {
           fetchOptions,
           formElementProps = {},
           children,
-          display = true,
-          visiable = true,
+          display = true, // 表单是否显示
+          visible = true, // 设置表单项是否渲染dom但不展示UI
           effected = false,
           showLabel: innerShowLabel,
           // form-item的vue实例组件属性
@@ -1005,7 +1005,7 @@ export default {
         };
 
         // 是否渲染并隐藏表单项
-        if (!(isFunction(visiable) ? visiable(innerFormData) : visiable)) {
+        if (!(isFunction(visible) ? visible(innerFormData) : visible)) {
           componentOptions.class = [...formItemClass, 'll-form__hidden'];
           formElementProps.disabled = true;
         }
@@ -1067,7 +1067,7 @@ export default {
         return isInline ? (
           template
         ) : (
-          <el-col span={span || 24} class={visiable ? '' : 'll-form__hidden'}>
+          <el-col span={span || 24} class={visible ? '' : 'll-form__hidden'}>
             {template}
           </el-col>
         );
