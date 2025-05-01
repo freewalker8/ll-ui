@@ -201,10 +201,10 @@ export default {
             return new Promise(resolve => {
               setTimeout(() => {
                 return resolve([
-                  { label: 'Tester', value: '3' },
-                  { label: 'Java developer', value: '2' },
-                  { label: 'Web Developer', value: '1' },
-                  { label: 'UI', value: '0' }
+                  { label: 'Level3', value: '3' },
+                  { label: 'Level2', value: '2' },
+                  { label: 'Level1', value: '1' },
+                  { label: 'Level0', value: '0' }
                 ]);
               }, 2000);
             });
