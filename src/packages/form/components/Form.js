@@ -166,6 +166,8 @@ export default {
     buttonPosition: { type: String, default: '' },
     // 提交按钮文本
     submitButtonLabel: { type: String, default: '提交' },
+    // 提交按钮属性配置对象
+    submitButtonAttrs: Object,
     // 提交按钮是否可用，true：可用，false：只有表单校验通过才可用
     submitButtonEnabled: { type: Boolean, default: true },
     // 重置按钮文本
