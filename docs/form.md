@@ -1070,34 +1070,304 @@ eg:
 
 ### 5.2 表单校验
 
+组件校验基于`async-validator`，通用校验规则配置请参照`el-form`关于表单校验部分的问题或参照`async-validator`文档。
+
+组件默认支持的校验类型有：
+
+`integer`, `float`, `array`, `email`, `number`, `date`, `url`, `regexp`, `object`, `method`,`hex`。
+
+
 #### 5.2.1 registerValidateType校验类型注册函数
 
+可将自己定义的校验规则注册为校验类型，方便复用，一次注册，后面可以直接使用。
+
+通过`registerValidateType`方法注册校验类型。
+
+函数签名：`registerValidateType(type: string, reg: RegExp, msg: string)`
+
+参数说明：
+
+- @param {String} type 类型标识
+- @param {RegExp | String} reg 正则表达式实例或能转换为正则实例的字符串
+- @param {String} msg 错误提示信息，可选，不填该项则会产出默认的错误提示信息
+
+eg:
+
+```js
+import { registerValidateType } from 'll-form-table';
+
+// 注册校验类型mobile
+registerValidateType('mobile', /^1[34578]\d{9}$/, '请输入正确的手机号');
+
+// 使用
+const rules = {
+  mobile: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    // 使用注册的类型
+    { type: 'mobile', message: '请输入正确的手机号', trigger: 'blur' }
+  ]
+}
+```
+
+同时提供了批量注册校验类型的函数`registerValidateTypes`，函数签名为`registerValidateTypes(types: Array<{type: string, reg: RegExp, msg: string}>)`，参数为一个对象数组，数组每个对象包含三个属性`type`、`reg`、`msg`，分别表示校验类型、正则表达式和错误信息。
 
 #### 5.2.2 validator基于正则的校验函数
 
+表单组件实现了`validator`方法，可基于正则来校验表单数据。
+
+函数签名：`validator(str: string, reg: RegExp): boolean`
+
+参数说明：
+
+- @param {String} str 待验证字符串
+- @param {RegExp|String} reg 正则表达式实例或可转换为正则表达式的字符串
+- @returns {Boolean} 验证结果
+
+eg:
+
+```js
+import { validator } from 'll-form-table';
+
+const rules = {
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    {
+      trigger: 'change',
+      validator: function(rule, value, callback) {
+        if (validator(value, /[a-zA-Z_]+/)) {
+          callback();
+        } else {
+          callback(new Error('只能输入字母和下划线，不能为空'));
+        }
+      }
+    }
+  ]
+}
+```
+
 ### 5.3 如何提交表单数据
 
+有多种方式提交表单数据，分别说明如下:
 
 #### 5.3.1 通过给post-data属性配置一个回调函数实现
 
+组件的`post-data`属性支持配置函数和字符串，当配置的为函数时，表单提交时会调用该函数，函数参数为表单绑定的数据对象，函数需返回一个Promise对象。
+
+函数签名：`(formData: Object) => Promise`
+
+eg:
+
+```html
+<template>
+  <ll-form
+    :form-items="formItems"
+    :model="formData"
+    :post-data="submitForm"
+    label-width="100px"
+  ></ll-form>
+</template>
+
+<script>
+export default {
+  name: 'GroupForm',
+  data() {
+    return {
+      formItems: [
+        { type: 'input', label: '账号', prop: 'account' },
+        {
+          type: 'inputNumber',
+          label: '年龄',
+          prop: 'age',
+          formElementProps: {
+            min: 1,
+            max: 200,
+            step: 1,
+            placeholder: '年龄'
+          }
+        }
+      ],
+      formData: {
+        account: 'stone',
+        age: 18
+      },
+      formLoading: false
+    };
+  },
+  methods: {
+    submitForm(formData) {
+      console.log('formData', formData);
+      this.formLoading = true;
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.formLoading = false;
+          this.$message.success('提交成功');
+          resolve('success');
+        }, 1500);
+      });
+    }
+  }
+};
+</script>
+```
+
 #### 5.3.2 通过监听submit事件实现
+
+若使用组件提供的提交按钮，在触发提交操作时，组件会抛出`submit`事件，此时监听`submit`事件可以获取表单数据，并自行实现表单提交逻辑。
+
+eg:
+```html
+<template>
+  <ll-form ref="form" :columns="columns" :data="data" @submit="handleSubmit"></ll-form>
+</template>
+
+<script>
+export default {
+  name: 'Demo',
+  methods: {
+    handleSubmit(formData) {
+      console.log('formData', formData);
+      this.$message.success('提交成功');
+    }
+  }
+}
+</script>
+```
 
 #### 5.3.3 自定义表单操作栏来实现
 
+可使用`operate`作用域插槽来自行实现表单操作栏。作用域插槽参数为`{formData: Object, submitForm: (formData) => void, resetForm: () => void, validateForm: (callback: Function(boolean, object)) => void | Promise }`。
+
+参数说明：
+
+- @param {Object} formData 表单绑定的数据对象
+- @param {Function} submitForm 组件实现的表单提交函数，参数为表单绑定的数据对象，返回一个Promise对象
+- @param {Function} resetForm 组件实现的表单重置函数
+- @param {Function} validateForm el-form表单的validate方法
+
+eg:
+```html
+<template>
+  <ll-form ref="form" :form-items="formItems" :model="formData" :rules="rules" :post-data="submitForm">
+    <template slot="operate" slot-scope="{ formData, submitForm, resetForm }">
+      <el-button type="primary" @click="submitForm">提交</el-button>
+      <el-button type="primary" @click="handlerSubmitForm(formData)">自行提交</el-button>
+      <el-button @click="resetForm">重置</el-button>
+    </template>
+  </ll-form>
+</template>
+
+<script>
+export default {
+  name: 'Demo',
+  data() {
+    return {
+      formItems: [
+        { type: 'input', label: '账号', prop: 'account' }, 
+      ] 
+    }  
+  },
+  methods: {
+    handlerSubmitForm(formData) {
+      console.log('formData', formData);
+      this.$message.success('提交成功');
+    }  
+  }
+}
+</script>
+```
+
 #### 5.3.4 通过给post-data属性配置一个数据提交接口来实现
 
+若`post-data`属性的值为字符串，则表示这是一个接口地址，当用户点击提交按钮时，会向该接口发送请求，请求体为`formData`。
+
+eg:
+
+```html
+<template>
+  <ll-form
+    :form-items="formItems"
+    :model="formData"
+    :post-data="'/api/user/add'"
+    label-width="100px"
+  ></ll-form>
+</template>
+
+<script>
+export default {
+  name: 'GroupForm',
+  data() {
+    return {
+      formItems: [
+        { type: 'input', label: '账号', prop: 'account' },
+        {
+          type: 'inputNumber',
+          label: '年龄',
+          prop: 'age',
+          formElementProps: {
+            min: 1,
+            max: 200,
+            step: 1,
+            placeholder: '年龄'
+          }
+        }
+      ],
+      formData: {
+        account: 'stone',
+        age: 18
+      }
+    };
+  }
+};
+</script>
+
+```
 
 #### 5.3.5 编辑模式时不提交不可编辑的表单项的值
 
+当表单处于编辑模式时，组件的`unsubmit-disabled-field`属性为`true`时，在表单提交时会过滤掉不可修改的表单项字段，不将值传递给接口。
+
 #### 5.3.6 编辑模式时不提交值未改变的表单项的值
+
+当表单处于编辑模式时，组件的`unsubmit-unchanged-field`属性为`true`时，在表单提交时会过滤掉未改变的表单项字段，不将值传递给接口。
 
 #### 5.3.7 回车提交表单
 
+组件的`enter-submit`属性为`true`时，在表单处于编辑模式时，在表单输入框按下回车时会触发表单提交操作。
+
 ### 5.4 自定义表单按钮
+
+组件默认实现了提交(submit)、重置(reset)、上一步(prev)、下一步(next)按钮，可通过`action-button-layout`属性来配置哪些显示哪些表单按钮及其布局顺序。
+
+其中只有分步表单才有`prev`和`next`按钮。
+
+可通过`button-position`属性来控制表单按钮对齐方式，可选值有`left`、`center`、`right`。
+
+可通过`submit-button-label`属性来修改提交按钮的文字，默认值为`提交`。
+可通过`submit-button-attrs`来全量配置提交按钮的属性，支持`el-button`的所有属性。
+可通过`submit-button-enabled`属性来控制表单提交按钮是否可用，默认值为`true`，当配置为`false`时，只有表单验证通过时提交按钮才可用（可点击）。
+
+可通过`reset-button-label`属性来修改重置按钮的文字，默认值为`重置`。
+可通过`reset-button-attrs`来全量配置重置按钮的属性，支持`el-button`的所有属性。
+
+同时组件提供了`operate`作用域插槽来用于个性化的自定义表单按钮。详细信息参照：[5.3.3 自定义表单操作栏来实现](#533-自定义表单操作栏来实现)
 
 #### 5.4.1 表单按钮属性
 
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| action-button-layout | 表单操作按钮设定和布局 | `String` | submit（提交）/reset（重置）/prevStep（上一步，分步表单可用）/nextStep（下一步，分步表单可用） | 'reset, submit' |
+| button-position | 表单按钮对齐方式 | `String` | left / center / right | center |
+| submit-button-label | 提交按钮文字 | `String` | - | 提交 |
+| submit-button-attrs | 提交按钮属性 | `Object` | - | - |
+| submit-button-enabled | 提交按钮是否可用，设置为`false`时表单校验通过才能点击提交按钮，否则提交按钮处于禁用状态 | `Boolean` | - | true |
+| reset-button-label | 重置按钮文字 | `String` | - | 重置 |
+| reset-button-attrs | 重置按钮属性 | `Object` | - | - |
+
 ### 5.5 表单查看模式
+
+组件的`view-mode`属性为`true`或者`mode`属性为`view`时，表单处于查看模式，此时表单组件会展示表单数据，不允许编辑。
+
+当同时配置了`view-mode`属性和`mode`属性时，`view-mode`属性优先级高于`mode`属性。
 
 ### 5.6 表单项分组
 
@@ -1145,12 +1415,84 @@ const formItems = [
 
 ### 5.7 默认的提交按钮不可点击
 
+可通过`submit-button-enabled`属性来控制表单提交按钮是否可用，默认值为`true`，当配置为`false`时，只有表单验证通过时提交按钮才可用（可点击）。
+
 ### 5.8 部分表单项组件说明
 
 #### 5.8.1 上传组件upload
 
+对element-ui的upload组件进行了封装，支持el-upload组件的所有属性配置，同时扩展了以下属性：
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| autoUpload | 是否自动上传 | `Boolean` | - | true |
+| previewImg | 是否预览图片 | `Boolean` | - | true |
+
 ## 6 组件属性说明
+
+组件支持`el-form`的所有属性，同时扩展了以下属性：
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| form-items | 表单配置对象数组 | `Array<FormItem>` | - | `[]` |
+| layout | 组件布局，包含表单内容和操作栏的顺序 | `String` | `form` / `operate` | `form, operate` |
+| get-data | 获取表单数据的接口地址或函数 | `[String, Function]` | - | - |
+| post-data | 提交表单数据的接口地址或函数 | `[String, Function]` | - | - |
+| http | ajax实例或全局Ajax对象名称，需实现了get和post方法 | `[Object, Function, String]` | - | - |
+| message | 设置表单交互提示信息 | `Object` | - | `{ getFailed: '', postSuccessed: '', postFailed: '' }` |
+| loading | 表单提交动效控制 | `Boolean` | - | `false` |
+| view-mode | 是否是查看模式 | `Boolean` | - | `false` |
+| data-type | 表单提交时表单数据的格式 | `String` | `json` / `formData` | `json` |
+| mode | 表单模式 | `String` | `add` / `edit` / `view` | `add` |
+| show-label | 全局配置是否显示表单项label | `Boolean` | - | `true` |
+| clearable | 全局配置表单项内容是否可清除 | `Boolean` | - | `false` |
+| enter-submit | 是否开启回车提交表单 | `Boolean` | - | `false` |
+| unsubmit-disabled-field | 提交表单时忽略不可编辑字段的值 | `Boolean` | - | `true` |
+| unsubmit-unchanged-field | 提交表单时忽略未变更字段的值 | `Boolean` | - | `false` |
+| size | 设置表单元素大小，包括各种类型的输入元素和按钮的大小 | `String` | `medium` / `small` / `mini` | `small` |
+| width | 非行内表单（inline）时，控制表单项宽度，默认占满剩余空间；若要单独设置某个表单项的宽度可为其设置width属性，如果在template里面则直接设置style.width | `[String, Number]` | - | `100%` |
+| class-name | 表单class名称 | `String` | - | - |
+| label-char-width | 文本字符的宽度，该属性只在isViewMode = true（表单查看模式）时有用 | `Number` | - | `15` |
+| native-on | 绑定本地原生事件 | `Object` | - | `{}` |
+| indent | 分组缩进距离，分组表单可用 | `Number` | - | `40` |
+| gutter | 表单项之间的间距（el-row的gutter属性） | `Number` | - | `0` |
+| tips-effect | 表单项输入框气泡提示主题 | `String` | `dark` / `light` | `dark` |
+| action-button-layout | 表单操作按钮设定和布局 | `String` | `submit` / `reset` / `prevStep` / `nextStep` | `reset, submit` |
+| button-position | 操作按钮对齐方式 | `String` | `left` / `center` / `right` | `center` |
+| submit-button-label | 提交按钮文字 | `String` | - | `提交` |
+| submit-button-attrs | 提交按钮属性配置对象 | `Object` | - | - |
+| submit-button-enabled | 提交按钮是否可用 | `Boolean` | - | `true` |
+| reset-button-label | 重置按钮文字 | `String` | - | `重置` |
+| reset-button-attrs | 重置按钮属性配置对象 | `Object` | - | - |
+
+---
+
+### 分步表单相关 props（`step = true` 时生效）
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| step | 是否是分步表单 | `Boolean` | - | `false` |
+| active-step | 激活的步骤 | `Number` | - | `0` |
+| prev-step-label | 上一步按钮的文本 | `String` | - | `上一步` |
+| next-step-label | 下一步按钮的文本 | `String` | - | `下一步` |
+| steps-attrs | el-steps组件属性配置 | `Object` | - | `{}` |
+| steps-position | 步骤条渲染位置 | `String` | `top` / `left` | `top` |
+| steps-width | 步骤条宽度 | `[String, Number]` | - | `100%` |
+| steps-height | 步骤条高度 | `[String, Number]` | - | `auto` |
 
 ## 7 组件事件说明
 
+## 7 组件事件说明
+
+| 事件名称 | 说明 | 参数 |
+| ---- | ---- | ---- |
+| submit | 当点击提交按钮且表单验证通过时触发 | formData：表单绑定的数据对象 |
+| refs | 组件挂载完成时触发，参数为表单引用和上传组件引用 | {formRef: vnode, uploadRefs: vnode[]} |
+| field-value-change | 当表单项的值发生变化时触发 | alue：表单项的值, path:表单项的prop属性值(属性路径) |
+
 ## 8 组件插槽说明
+
+| 事件名称 | 说明 | 参数 |
+| ---- | ---- | ---- |
+| default | 表单内容 | 无 |
+| operate | 自定义组件操作栏 | { formData: Object, submitForm: (formData) => void | Promise, resetForm: () => void, validateForm: (callback: Function(boolean, object)) => void | Promise } |

@@ -87,6 +87,7 @@ function required(rule, value, source, errors, options, type) {
  * 正则校验函数，根据给定的正则表达式验证给定字符串是否合法
  * @param {String} str 待验证字符串
  * @param {RegExp|String} reg 正则表达式实例或可转换为正则表达式的字符串
+ * @returns {Boolean} 验证结果
  */
 export const regValidator = function(str, reg) {
   // 内容为空，跳过校验
