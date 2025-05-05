@@ -1089,11 +1089,11 @@ export default {
           class='ll-form__clear-both'
           style={{ paddingLeft: `${parseInt(indent) || _commonIndent * groupLevel}px` }}
           gutter={gutter}>
-          <el-collpase vModel={activeCollapseMap[prop]}>
-            <el-collpase-item title={label} name={prop}>
+          <el-collapse vModel={activeCollapseMap[prop]}>
+            <el-collapse-item title={label} name={prop}>
               {_renderFormItems(h, children)}
-            </el-collpase-item>
-          </el-collpase>
+            </el-collapse-item>
+          </el-collapse>
         </el-row>
       );
     },
