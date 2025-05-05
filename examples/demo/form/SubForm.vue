@@ -4,7 +4,6 @@
     :model="formData"
     :rules="rules"
     :post-data="submitForm"
-    :show-label="false"
     button-position="center"
     label-width="100px"
     class="ll-form-warp"
@@ -32,30 +31,55 @@ export default {
           }
         },
         {
-          type: 'group',
-          label: '教育信息',
+          label: '嵌套教育信息',
           prop: 'edu',
-          children: [
-            {
-              type: 'input',
-              prop: 'edu.highSchool',
-              label: '高中'
-            },
-            {
-              type: 'input',
-              prop: 'edu.university',
-              label: '大学'
-            }
-          ]
+          render: () => {
+            const items = [
+              {
+                type: 'input',
+                label: '高中',
+                prop: 'highSchool',
+                formElementProps: {
+                  placeholder: '高中'
+                }
+              },
+              {
+                type: 'input',
+                label: '大学',
+                prop: 'university',
+                formElementProps: {
+                  placeholder: '大学'
+                }
+              }
+            ];
+
+            return (
+              <div>
+                <br />
+                <ll-form
+                  {...{
+                    props: {
+                      formItems: items
+                    },
+                    attrs: {
+                      model: this.subFormData
+                    },
+                    on: {
+                      submit: this.submitSubForm
+                    }
+                  }}></ll-form>
+              </div>
+            );
+          }
         }
       ],
       formData: {
         account: 'stone',
-        age: 18,
-        edu: {
-          highSchool: '',
-          university: ''
-        }
+        age: 18
+      },
+      subFormData: {
+        highSchool: '',
+        university: ''
       },
       rules: {
         account: [
@@ -76,13 +100,25 @@ export default {
     };
   },
   methods: {
+    submitSubForm(formData) {
+      debugger;
+      console.log('sub formData', formData);
+      this.formLoading = true;
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.formLoading = false;
+          this.$message.success('提交子表单数据成功');
+          resolve('success');
+        }, 1500);
+      });
+    },
     submitForm(formData) {
       console.log('formData', formData);
       this.formLoading = true;
       return new Promise(resolve => {
         setTimeout(() => {
           this.formLoading = false;
-          this.$message.success('提交成功');
+          this.$message.success('提交父表单数据成功');
           resolve('success');
         }, 1500);
       });

@@ -29,6 +29,14 @@ const routes = [
     component: () => import('./demo/form/StepForm.vue')
   },
   {
+    path: '/form/group',
+    component: () => import('./demo/form/GroupForm.vue')
+  },
+  {
+    path: '/form/sub',
+    component: () => import('./demo/form/SubForm.vue')
+  },
+  {
     path: '/form/custom-operate-button',
     component: () => import('./demo/form/CustomOperateButton.vue')
   },

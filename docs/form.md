@@ -962,14 +962,111 @@ const formItems = [
 
 #### 5.1.14．表单嵌套
 
+支持父子表单嵌套。在配置对象里面通过`render`函数来嵌套表单。
+
+eg:
+
+```js
+const formItems = [
+  { type: 'input', label: '账号', prop: 'account' },
+  {
+    type: 'inputNumber',
+    label: '年龄',
+    prop: 'age',
+    formElementProps: {
+      min: 1,
+      max: 200,
+      step: 1,
+      placeholder: '年龄'
+    }
+  },
+  {
+    label: '教育信息',
+    prop: 'edu',
+    render: () => {
+      const items = [
+        {
+          type: 'input',
+          label: '高中',
+          prop: 'highSchool',
+          formElementProps: {
+            placeholder: '高中'
+          }
+        },
+        {
+          type: 'input',
+          label: '大学',
+          prop: 'university',
+          formElementProps: {
+            placeholder: '大学'
+          }
+        }
+      ];
+
+      return (
+        <div>
+          <br />
+          <ll-form
+            {...{
+              props: {
+                formItems: items
+              },
+              attrs: {
+                model: this.subFormData
+              },
+              on: {
+                submit: this.submitSubForm
+              }
+            }}></ll-form>
+        </div>
+      );
+    }
+  }
+]
+```
+
+示例详情参见: [demo/form/sub-form.vue](../examples/demo/form/SubForm.vue)
+
+渲染结果：
+
+![sub-form](./img/sub-form.png)
+
 #### 5.1.15．不展示表单项label
 
+可通过表单的`show-label`属性控制表单的label是否显示，将属性值设置为`false`则不展示label，默认值为`true`。
+
+eg:
+
+```html
+<ll-form ref="form" :form-items="formItems" :model="model" :rules="rules" show-label="false"></ll-form>
+```
 
 #### 5.1.16．自定义表单项label
 
+通过表单项配置对象的`labelRender`属性自定义表单项label，将属性值设置为一个函数，函数返回一个字符串或者一个jsx对象。
+
+eg:
+```js
+const formItems = [
+  type: 'input',
+  prop: 'name',
+  label: '姓名',
+  // labelRender属性的优先级高于label属性，所以表单项的label会显示为“你的姓名”
+  labelRender: () => {
+    return <div>你的姓名</div>
+  }
+];
+```
 
 #### 5.1.17．将表单绑定值转为FormData
 
+有时接口接受的参数类型为`FormData`，可以通过表单属性`data-type`属性来指定提交时传递的表单数据类型，属性值为`formData`时将在触发提交操作时先将数据转换为`FormData`类型，然后将表单数据抛出。`data-type`属性的默认值为`json`，即默认将表单数据转为`json`格式。你可以自行将数据转换成接口接受的数据类型。
+
+eg:
+
+```html
+<ll-form :form-items="formItems" :model="formData" data-type="formData" /> 
+```
 
 ### 5.2．表单校验
 
@@ -1003,6 +1100,48 @@ const formItems = [
 ### 5.5，表单查看模式
 
 ### 5.6．表单项分组
+
+可以将同一类信息放在同一组里面，通过配置`type: 'group'`来实现。
+
+在父表单里面定义表单配置对象的`type`为`group`并配置`children`属性，`children`属性为一个表单项配置数组
+
+```js
+const formItems = [
+  { type: 'input', label: '账号', prop: 'account' },
+  {
+    type: 'inputNumber', label: '年龄', prop: 'age',
+    formElementProps: {
+      min: 1,
+      max: 200,
+      step: 1,
+      placeholder: '年龄'
+    }
+  },
+  {
+    type: 'group',
+    label: '教育信息',
+    prop: 'edu',
+    children: [
+      {
+        type: 'input',
+        prop: 'edu.highSchool',
+        label: '高中'
+      },
+      {
+        type: 'input',
+        prop: 'edu.university',
+        label: '大学'
+      }
+    ]
+  }
+]
+```
+
+示例详情参见: [demo/form/group-form.vue](../examples/demo/form/GroupForm.vue)
+
+渲染结果如下所示：
+
+![group-form](./img/group-form.png)
 
 ### 5.7．默认的提交按钮不可点击
 
