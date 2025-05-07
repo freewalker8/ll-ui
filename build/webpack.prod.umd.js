@@ -22,7 +22,7 @@ module.exports = {
   mode: 'production',
   entry,
   output: {
-    library: 'll-form-table',
+    library: 'llFormTable',
     libraryTarget: 'umd',
     filename,
     path: resolve('../dist')
