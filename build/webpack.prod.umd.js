@@ -15,17 +15,30 @@ const { externals, resolve, alias, rules } = require('./common');
 
 const pkg = require('../package.json');
 const reportFilename = resolve('../report.umd.html');
-const filename = 'll.umd.js';
-const entry = resolve('../src/packages/index.umd.js');
+
+const { COMP } = process.env;
+let libraryName = 'llFormTable';
+let filename = 'll-form-table.umd.js';
+let entry = resolve('../src/packages/index.umd.js');
+
+if (COMP === 'form') {
+  libraryName = 'llForm';
+  filename = 'll-form.umd.js';
+  entry = resolve('../src/packages/form/index.umd.js');
+} else if (COMP === 'table') {
+  libraryName = 'llTable';
+  filename = 'll-table.umd.js';
+  entry = resolve('../src/packages/table/index.umd.js');
+}
 
 module.exports = {
   mode: 'production',
   entry,
   output: {
-    library: 'llFormTable',
+    library: libraryName,
     libraryTarget: 'umd',
     filename,
-    path: resolve('../dist')
+    path: resolve('../dist/umd')
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

@@ -14,16 +14,6 @@ import { LlTable, LlTableStatic, setProps as setTableProps, install as useTable 
 // eslint-disable-next-line no-undef
 const version = _VERSION_;
 
-function install(...args) {
-  LlForm.install(...args);
-  LlTable.install(...args);
-  LlTableStatic.install(...args);
-}
-
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue);
-}
-
 LlForm.version = version;
 LlForm.validator = validator;
 LlForm.addUIType = addUIType;
@@ -35,6 +25,16 @@ LlForm.UITypes = UITypes;
 LlTable.version = version;
 LlTable.setProps = setTableProps;
 LlTableStatic.setProps = setTableProps;
+
+function install(...args) {
+  LlForm.install(...args);
+  LlTable.install(...args);
+  LlTableStatic.install(...args);
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+  install(window.Vue);
+}
 
 export {
   version,
@@ -50,7 +50,15 @@ export default {
   install,
   // 表单导出
   LlForm,
+  addUIType,
+  addUITypes,
+  UITypes,
+  validator,
+  registerValidateType,
+  registerValidateTypes,
   // 表格导出
+  useTable,
   LlTable,
-  LlTableStatic
+  LlTableStatic,
+  setTableProps
 };

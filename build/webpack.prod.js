@@ -16,8 +16,22 @@ const { externals: commonExternals, resolve, alias, rules } = require('./common'
 
 const pkg = require('../package.json');
 const reportFilename = resolve('../report.html');
-const filename = 'll.common.js';
-const entry = resolve('../src/packages/index.js');
+const { COMP } = process.env;
+// console.log('COMP', COMP);
+let libraryName = 'll-form-table';
+let filename = 'll-form-table.js';
+let entry = resolve('../src/packages/index.js');
+
+if (COMP === 'form') {
+  libraryName = 'll-form';
+  filename = 'form.js';
+  entry = resolve('../src/packages/form/index.js');
+} else if (COMP === 'table') {
+  libraryName = 'll-table';
+  filename = 'table.js';
+  entry = resolve('../src/packages/table/index.js');
+}
+
 const externals = {
   ...commonExternals,
   'async-validator': 'async-validator',
@@ -29,7 +43,7 @@ module.exports = {
   mode: 'production',
   entry,
   output: {
-    library: 'll-form-table',
+    library: libraryName,
     libraryTarget: 'commonjs2',
     filename,
     path: resolve('../dist')
@@ -37,7 +51,11 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     modules: ['node_modules'],
-    alias
+    alias: {
+      ...alias,
+      'll-form-table/form': resolve('../src/packages/form'),
+      'll-form-table/table': resolve('../src/packages/table')
+    }
   },
   performance: {
     hints: false

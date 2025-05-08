@@ -2,16 +2,20 @@
   "name": "ll-form-table",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/ll.common.js",
+  "main": "ll-form-table.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:umd": "cross-env MODE=pkg NODE_ENV=production webpack --config ./build/webpack.prod.umd.js",
+    "build-form:umd": "cross-env MODE=pkg COMP=form NODE_ENV=production webpack --config ./build/webpack.prod.umd.js",
+    "build-table:umd": "cross-env MODE=pkg COMP=table NODE_ENV=production webpack --config ./build/webpack.prod.umd.js",
     "build:commonjs": "cross-env MODE=pkg NODE_ENV=production webpack --config ./build/webpack.prod.js",
+    "build-form:commonjs": "cross-env MODE=pkg COMP=form NODE_ENV=production webpack --config ./build/webpack.prod.js",
+    "build-table:commonjs": "cross-env MODE=pkg COMP=table NODE_ENV=production webpack --config ./build/webpack.prod.js",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "fix": "vue-cli-service lint --fix",
     "clean": "rimraf dist && rimraf **/*.tgz",
-    "pack": "npm run clean && npm run build:commonjs && npm run build:umd && npm pack"
+    "pack": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm pack"
   },
   "dependencies": {
     "core-js": "^3.6.5",
