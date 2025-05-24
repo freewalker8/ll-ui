@@ -39,14 +39,12 @@
     - [6.1.2 后端排序](#612-后端排序)
     - [6.1.3 表格行拖动排序](#613-表格行拖动排序)
   - [6.2 表格过滤](#62-表格过滤)
-    - [6.2.1 静态表格过滤](#621-静态表格过滤)
-    - [6.2.2 动态表格过滤](#622-动态表格过滤)
   - [6.3 表格行选中](#63-表格行选中)
     - [6.3.1 当前页选中](#631-当前页选中)
     - [6.3.2 分页选中](#632-分页选中)
     - [6.3.3 深度选中](#633-深度选中)
   - [6.4 表格列排序](#64-表格列排序)
-  - [6.5 多级表格](#65-多级表格)
+  - [6.5 多级表头](#65-多级表头)
   - [6.6 动态增减表格列](#66-动态增减表格列)
   - [6.7 表格行展开](#67-表格行展开)
   - [6.8 可编辑表格](#68-可编辑表格)
@@ -656,29 +654,225 @@ export default {
 
 静态排序是指在前端对表格数据进行排序。
 
+参照`el-table`的排序功能，通过`sortable`属性来开启排序功能，默认关闭。
+
 #### 6.1.2 后端排序
+
+后端排序是指在后端对表格数据进行排序。
+
+参照`el-table`的排序功能，通过`sortable`属性设置为`custom`来开启自定义排序功能，监听`sort-change`事件，调用后端接口，获取排序后的数据。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :http-request="fetchData" @sort-change="handerSort"></ll-table>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      query: { page: 1, pageSize: 10, name: '' },
+      columns: [
+        { prop: 'name', label: '姓名', sortable: 'custom' },
+        { prop: 'age', label: '年龄', sortable: 'custom' }
+      ]
+    } 
+  },
+  methods: {
+    // 处理排序
+    handerSort({ prop, order }) {
+      console.log('prop:', prop, 'order:', order);
+      // 调用后端接口，获取排序后的数据
+      // ...
+    },
+    // 处理分页
+    fetchData(params) {
+      return api.query({ ...this.query, ...params}).then(res => {
+        return res.data;
+      })
+    }
+  }
+}
+</script>
+```
 
 #### 6.1.3 表格行拖动排序
 
+拖动表格行进行排序，通过`row-draggable`属性控制是否开启行拖动排序功能，默认关闭。
+
+行拖到排序相关属性：
+- `rowDraggable`：是否开启行拖动排序功能，类型为`Boolean`，默认为 `false`。
+- `dragGroup`：拖拽分组，类型为`String`，默认值为 `llTable`。
+- `ghostClass`：定义放置元素的类名称，类型为`String`，默认为 `ll-table__drag-row--ghostClass`。
+- `chosenClass`：定义正在被拖动的元素类名称，类型为`String`，默认为 `ll-table__drag-row--chosen`。
+- `dragOptions`：拖动组件配置，类型为`Object`，支持`sortablejs`的所有配置，如果配置了组件的dragGroup，ghostClass属性，那么他们的值会覆盖通过dragOptions配置的同名属性值，默认为 `{}`。
+- `handleRowSortError`：自行处理排序时抛出的错误信息，给出操作提示，类型为`Function`。
+
+eg:
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :row-draggable="true"></ll-table>
+</template>
+<script>
+```
+
 ### 6.2 表格过滤
 
-#### 6.2.1 静态表格过滤
-
-#### 6.2.2 动态表格过滤
+参见`el-table`的过滤功能。配置表格列的`filters`和`filter-method`等属性来控制过滤功能。
 
 ### 6.3 表格行选中
 
 #### 6.3.1 当前页选中
 
+选中数据只基于当前表格展示的页数据，翻页后选中数据会丢失。
+
+当前页选中数据可通过组件的`selection`和`selection-data`属性使用sync修饰符来同步选中数据。`selection`由选中行的`row-key`属性值组成，`selection-data`为选中行数据。
+
+若高清除选中的数据可调用表格组件暴露的`clearAllSelection`方法，该方法无参数，无返回值。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :row-key="'id'" :selection.sync="selection" :selection-data.sync="selectionData"></ll-table>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      selection: ['1'], // 选中行的row-key组成的数组
+      selectionData: [{ id: 1, name: '张三', age: 20 }], // 选中行的数据 
+      tableData: [
+        { id: 1, name: '张三', age: 20 },
+        { id: 2, name: '李四', age: 25 } 
+      ]
+      // 忽略其它属性
+    } 
+  } 
+}
+</script>
+```
+
 #### 6.3.2 分页选中
+
+分页选中数据基于所有表格数据，翻页后选中数据不会丢失。通过`pagination-selectable`属性开控制是否开启分页选中功能，默认关闭（false）。
+
+注意：数据使用完毕后不需要选中数据时需要手动清空选中数据，否则会造成选中了上次的数据的情况，清除选中数据可调用表格组件暴露的`clearAllSelection`方法，该方法无参数，无返回值。
+
+所有选中数据也可通过组件的`selection`和`selection-data`属性使用sync修饰符来同步选中数据。`selection`由选中行的`row-key`属性值组成，`selection-data`为选中行数据。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :row-key="'id'" :pagination-selectable="true" :selection.sync="selection" :selection-data.sync="selectionData"></ll-table>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      selection: ['1'], // 选中行的row-key组成的数组
+      selectionData: [{ id: 1, name: '张三', age: 20 }], // 选中行的数据 
+      tableData: [
+        { id: 1, name: '张三', age: 20 },
+        { id: 2, name: '李四', age: 25 } 
+      ]
+      // 忽略其它属性
+    } 
+  } 
+}
+</script>
+```
 
 #### 6.3.3 深度选中
 
+当表格数据存在父子结构时，选中或取消选中父节点时想同步选中或取消选中子节点，可通过`deep-select`属性控制是否开启深度选中功能，默认关闭（false）。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :row-key="'id'" :deep-select="true" :selection.sync="selection" :selection-data.sync="selectionData"></ll-table>
+</template>
+<!-- 省略其它代码 -->
+```
 ### 6.4 表格列排序
 
-### 6.5 多级表格
+参见：[5.3.2.2.2 拖动排序](#53222-拖动排序)
+
+### 6.5 多级表头
+
+el-table默认支持多级表头，表格组件将模板语法转换成了json模板定义语法，通过`children`属性配置子列信息。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData"></ll-table>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      tableData: [
+        { id: 1, name: '张三', age: 20, address: { city: '北京', district: '朝阳区' } },
+        { id: 2, name: '李四', age: 25, address: { city: '上海', district: '黄浦区' } } 
+      ],
+      columns: [
+        { prop: 'id', label: 'ID' },
+        { prop: 'name', label: '姓名' },
+        { prop: 'age', label: '年龄' },  
+        // 多级表头配置
+        { prop: 'location', label: '籍贯', children: [
+            { prop: 'city', label: '城市' },
+            { prop: 'district', label: '区县' }
+          ]
+        },
+      ]
+    } 
+  } 
+}
+<script>
+```
 
 ### 6.6 动态增减表格列
+
+在表格列初始定义完成后，可以通过 `columns` 属性动态增删列。表格会自动根据列配置进行渲染。刷新表格。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData"></ll-table>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      tableData: [
+        { id: 1, name: '张三', age: 20, address: { city: '北京', district: '朝阳区' } },
+        { id: 2, name: '李四', age: 25, address: { city: '上海', district: '黄浦区' } } 
+      ]，
+      columns: [
+        { prop: 'id', label: 'ID' },
+        { prop: 'name', label: '姓名' },
+        { prop: 'age', label: '年龄' }, 
+      ]
+    } 
+  }，
+  mounted() {
+    // 动态添加列
+    this.columns.push({ prop: 'address', label: '籍贯', children: [
+        { prop: 'city', label: '城市' },
+        { prop: 'district', label: '区县' }
+      ]
+    }); 
+  }
+}
+</script>
+```
 
 ### 6.7 表格行展开
 

@@ -918,7 +918,7 @@ export default {
 
       // 不是点击全选选中，单独点击行选中时，透传select事件并发送自定义事件
       if (isChecked === undefined) {
-        this.$emit('select', rows, row);
+        this.$emit('select', rows, row); // 透传select事件
 
         const realSelection = paginationSelectable ? this.allSelection : this.pageSelection;
         const realSelectionData = paginationSelectable ? this.allSelectionData : this.pageSelectionData;
