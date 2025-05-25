@@ -154,7 +154,7 @@ export default {
       }
 
       if (this._isDragDataSon(fromData, toData)) {
-        const errorMessage = '拖拽失败，不能父子节点拖拽到自己的子节点内';
+        const errorMessage = '拖拽失败，父子点不能拖拽到自己的子节点内';
         if (this.handleRowSortError) {
           this.handleRowSortError('row-sort-error', errorMessage); // 使用用户配置的自定义的错误处理
         } else {

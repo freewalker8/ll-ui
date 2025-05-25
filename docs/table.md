@@ -57,7 +57,7 @@
 - [8 组件暴露的事件](#8-组件暴露的事件)
   - [8.1 数据变更事件](#81-数据变更事件)
   - [8.2 分页变更事件](#82-分页变更事件)
-  - [8.3 过滤信息变更事件](#83-过滤信息变更事件)
+  - [8.3 列过滤变更事件](#83-列过滤变更事件)
   - [8.4 拖动表头对列排序完成时对外暴露的事件](#84-拖动表头对列排序完成时对外暴露的事件)
   - [8.5 拖动行排序完成时对外暴露的事件](#85-拖动行排序完成时对外暴露的事件)
 - [9 组件暴露的方法](#9-组件暴露的方法)
@@ -876,31 +876,194 @@ export default {
 
 ### 6.7 表格行展开
 
+在可展开行的表格,包括显示设置了`type='expand'`的列和行数据包含`children`的列(包含子行数据时父行必然是可展开的)，可配置哪些列默认展开。通过`expand-rows`属性设置默认展开的行，数据由row-key组成。
+
+eg:
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :expand-rows="['1']"></ll-table
+  ></ll-table>
+</template>
+<script>
+export default {
+ 
+  data() {
+    return {
+      tableData: [
+        { id: 1, name: '张三', age: 20, children: [{ id: 11, name: '张三2', age: 20 }] },
+        { id: 2, name: '李四', age: 25 } 
+      ]，
+      columns: [
+        { prop: 'id', label: 'ID' }
+        { prop: 'name', label: '姓名' }，
+        { prop: 'age', label: '年龄' }，
+      ]
+    }
+  }
+}
+</script>
+```
+
 ### 6.8 可编辑表格
+
+表格单元格支持编辑，可通过 `editable` 属性控制是否开启编辑功能，默认关闭。
+
+编辑功能支持通过`click-edit`来控制编辑模式：
+
+- 1.属性值为`false` 时，默认所有单元格都处于可编辑状态。
+- 2.属性值为`true` 时，点击的单元格可编辑。
+
+可通过`auto-save`属性控制编辑框失去焦点时是否自动发送`cell-change`事件以便监听保存，实现数据保存功能，默认值为`true`。
+
+可通过`enter-save`属性控制编辑框按下回车时是否自动发送`cell-change`事件以便监听保存，实现数据保存功能，默认值为`false`。
+
+触发保存操作的按钮名称可通过`save-label`属性来自定义，默认值为`保存`。
+
+触发取消操作的按钮名称可通过`cancel-label`属性来自定义，默认值为`取消`。
+
+当表格单元格处于编辑状态时，手动触发变更事件时，用户未保存单元格数据时的会触发提醒用户保存数据，提示信息可通过`save-message`属性来定义，默认值为`编辑内容未保存`。
+
+eg:
+
+```html
+<template>
+  <ll-table :columns="columns" :data="tableData" :editable="true" :click-edit="true" :auto-save="true" :enter-save="false" :save-label="`保存`" :cancel-label="`取消`" :save-message="`编辑内容未保存`"></ll-table>
+</template>
+<script>
+  // 省略其它代码
+```
 
 ## 7 组件属性详解
 
 ### 7.1 静态表格和动态表格公用的属性
 
+| 属性名 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `layout` | `String` | `'tool, table, pagination'` | 表格布局排列方式，用于设置模块是否展示及展示顺序。支持配置'tool, table, extra, pagination'（分别表示工具栏、表格、附件内容、分页器）；同一个模块可多次展示（如`tool, pagination, table, pagination`） |
+| `data` | `Array<Object>` | `[]` | 表格数据 |
+| `columns` | `Array<Column>` | `[]` | 表格列配置 |
+| `rowKey` | `String / Function` | `'id'` | 行数据的唯一标识（字符串为字段名，函数需返回唯一值） |
+| `emptyPlaceholder` | `String / Function` | `''` | 单元格内容为空时的占位符（函数需返回占位符字符串） |
+| `editable` | `Boolean` | `false` | 单元格是否可编辑 |
+| `clickEdit` | `Boolean` | `true` | 是否点击单元格才展示编辑框（`false`时所有单元格默认可编辑） |
+| `autoSave` | `Boolean` | `true` | 编辑框失去焦点时是否自动触发`cell-change`事件（用于保存） |
+| `enterSave` | `Boolean` | `false` | 是否开启回车提交（触发`cell-change`事件） |
+| `saveLabel` | `String` | `'保存'` | 保存按钮文本 |
+| `cancelLabel` | `String` | `'取消'` | 取消按钮文本 |
+| `saveMessage` | `String` | `'编辑内容未保存'` | 手动触发变更时，用户未保存数据的提示信息 |
+| `dragSortable` | `Boolean` | `false` | 是否允许列拖动排序 |
+| `dragSortMode` | `String` | `'thead'` | 拖动排序模式（`thead`：拖动表头排序；`formItem`：在列过滤器中拖动item排序） |
+| `selection` | `Array` | `[]` | 默认选中的行（由`row-key`组成，`type='selection'`列生效） |
+| `selectionData` | `Array` | `[]` | 默认选中的行完整数据（`type='selection'`列生效） |
+| `expandRows` | `Array` | `[]` | 默认需要展开的行（由`row-key`组成） |
+| `pageable` | `Boolean` | `true` | 是否启用分页功能 |
+| `paginationSelectable` | `Boolean` | `false` | 是否支持分页选中（切换分页时保留选中状态） |
+| `deepSelect` | `Boolean` | `false` | 点击选中行时是否深度选中（选中节点的子节点） |
+| `paginationFixedOnButtom` | `Boolean` | `false` | 是否将分页栏固定到页面底部（需开启`autoHeight`） |
+| `currentPage` | `Number` | `1` | 当前页码 |
+| `pageSize` | `Number` | `10` | 每页数据条数（实际默认值为`10`，由全局配置或`paginationProps.pageSize`决定） |
+| `paginationProps` | `Object` | `{}` | 分页器配置（与`el-pagination`属性一致） |
+| `hideOnSinglePage` | `Boolean` | `undefined` | 只有一页时是否隐藏分页器（优先级高于`paginationProps.hideOnSinglePage`） |
+| `customTableClass` | `String` | `undefined` | 自定义表格类名 |
+| `autoHeight` | `Boolean` | `true` | 是否响应窗口大小调整表格内容区高度 |
+| `minHeight` | `Number` | `100` | 表格内容区最小高度（单位：px） |
+| `fixHeight` | `Number` | `100` | 表格内容区高度的修正系数（用于调整实际高度） |
+| `tcdLayout` | `Boolean` | `false` | 是否启用上中下布局（中间内容区自适应，上下固定） |
+
 #### 7.1.1 列过滤相关属性
+
+| 属性名 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `columnFilterable` | `Boolean` | `false` | 是否启用列过滤功能 |
+| `columnFilterSelected` | `Array` | `-` | 选中的列（由表格列的 `prop` 属性组成的数组），控制哪些列默认显示 |
+| `columnFilterAlwaysSelected` | `Array` | `[]` | 默认始终选中的列（不可取消选中，由 `prop` 属性组成） |
+| `columnFilterClass` | `String` | `'ll-table__filterColumn'` | 过滤表单的自定义 CSS 类名 |
+| `columnFilterWidth` | `String / Number` | `440` | 过滤表单的宽度（支持像素值或百分比） |
+| `columnFilterRowNum` | `Number` | `4` | 过滤表单每行显示的 CheckBox 数量（需满足 `24 % columnFilterRowNum === 0`） |
+| `columnFilterButtonLayout` | `String` | `'cancel, all, reset'` | 过滤表单操作按钮的排列顺序（可选值：`cancel`（取消）、`all`（全选）、`reset`（重置），用逗号分隔） |
+| `columnFilterCancelLabel` | `String` | `'取消'` | 过滤表单「取消」按钮的文本 |
+| `columnFilterResetLabel` | `String` | `'重置'` | 过滤表单「重置」按钮的文本 |
+| `columnFilterAllLabel` | `String` | `'全选'` | 过滤表单「全选」按钮的文本 |
+| `maxColumnNum` | `Number` | `-` | 不包含操作列的最大展示列数（默认显示所有可过滤列） |
+| `minColumnNum` | `Number` | `1` | 最小展示列数（需大于 0，否则控制台报错） |
 
 #### 7.1.2 行拖动相关属性
 
+| 属性名 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `rowDraggable` | `Boolean` | `false` | 是否启用表格行拖动排序功能 |
+| `dragGroup` | `String` | `'llTable'` | 拖拽分组标识（用于跨表格拖动场景，相同分组的表格支持相互拖动） |
+| `ghostClass` | `String` | `'ll-table__drag-row--ghostClass'` | 拖动时放置元素的 CSS 类名（控制占位行的样式） |
+| `chosenClass` | `String` | `'ll-table__drag-row--chosen'` | 正在被拖动元素的 CSS 类名（控制当前拖动行的样式） |
+| `dragOptions` | `Object` | `{}` | 拖动组件配置（支持 `sortablejs` 所有配置，若配置了 `dragGroup`、`ghostClass` 等属性，会覆盖组件默认值） |
+| `handleRowSortError` | `Function` | `-` | 自定义处理行排序错误的回调函数（参数：错误类型 `String`、错误信息 `String`） |
+
 ### 7.2 动态表格特有的属性
+
+| 属性名 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `total` | `Number` | `-` | 表格数据总量（通常动态表格不直接设置，用于初始化时的数据量配置） |
+| `loading` | `Boolean` | `false` | 表格是否处于加载状态（控制加载动画显示） |
+| `autoInit` | `Boolean` | `true` | 是否自动调用数据获取方法初始化表格（`true` 时组件挂载后自动请求数据） |
+| `httpRequest` | `Function(query: Object, extraParams: Object): Promise / Object` | `-` | 数据查询配置：<br>- 函数：返回 `Promise` 对象，需解析为 `{data, total, pageSize, currentPage}` 格式；<br>- 对象：HTTP 请求配置对象（需实现 `get、post`方法） |
+| `params` | `Object` | `{}` | 查询参数（会与分页参数合并后传递给 `httpRequest`） |
+| `propsMap` | `Object` | `{data: 'data', total: 'total', pageSize: pageSize', currentPage: 'currentPage'}` | 接口数据映射配置（必填 `data` 和 `total` 字段，支持级联映射如 `data.list`）：<br>- `data`：接口返回数据集合（默认 `data`）；<br>- `total`：接口返回数据总条数字段名（默认 `total`）；<br>- `pageSize`：每页数据条数字段名（默认 `pageSize`）；<br>- `currentPage`：当前页字段名（默认 `currentPage`） |
+| `fetch` | `Function` | `-` | HTTP 请求实例（用于发起请求，当 `httpRequest` 属性未配置时需配置此属性，否则报错，因为没有发起接口请求的实现） |
 
 ### 7.3 列属性扩展
 
+表格列配置对象支持`el-table-column`的所有属性，同时支持以下扩展属性：
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `order` | `Number` | `-` | 定义列顺序，按值大小正序排序，默认值为列索引 |
+| `render` | `Function(h, scope): VNodes` | `-` | 自定义列内容渲染函数，h 为 Vue 的 h 函数，scope 为列数据对象，包含`row`、`rowIndex`、`column`、`columnIndex`、`$index` 等属性 |
+| `header` | `Function(h, { column, $index }): VNodes` | `-` | 自定义表头的渲染函数 |
+| `editable` | `Boolean` | `false` | 是否可编辑，优先级高于组件配置的`editable`属性值 |
+
 ## 8 组件暴露的事件
+
+组件对外暴露了一些时间，可以监听事件实现自定义功能。
 
 ### 8.1 数据变更事件
 
+| 事件名 | 参数 | 说明 |
+| --- | --- | --- |
+| `cell-change` | `newVal, prop, row, $index` | 可编辑表格单元格数据变更后触发，`newVal`:  新值,`prop`: 列prop属性,`row`: 行数据,`$index`: 行索引 |
+| `data-edit` | `curTableData: Array` | 可编辑表格数据修改后触发，``curTableData`: 当前表格数据 |
+| `data-change` | `{ data: Array, total: Number, pageSize: Number, currentPage: Number, params: Object }` | 动态表格通过接口获取表格绑定数据成功时触发 |
+
 ### 8.2 分页变更事件
 
-### 8.3 过滤信息变更事件
+| 事件名 | 参数 | 说明 |
+| --- | --- | --- |
+| `size-change` | `pageSize: Number` | 分页大小改变时触发 |
+| `current-page-change` | `currentPage: Number` | 页码变化时触发 |
+| `pagination-change` | `{ pageSize: Number, currentPage: Number }` | 分页信息改变（包括分页大小、页码的变更）时触发 |
+| `prev-click` | `currentPage: Number` | 点击上一页按钮改变当前页后触发 |
+| `next-click` | `currentPage: Number` | 点击下一页按钮改变当前页后触发 |
+
+### 8.3 列过滤变更事件
+
+| 事件名 | 参数 | 说明 |
+| --- | --- | --- |
+| `column-filter` | `checkedColumns: Array` | 选中的列变更时实时触发，`checkedColumns`：选中列prop数组 |
+| `column-filter-confirm` | `checkedColumns: Array` | 发送筛选完成事件，关闭过滤弹窗时触发（发生了筛选操作），`checkedColumns`：选中列prop数组 |
+| `column-reset` | `checkedColumns: Array` | 列过滤重置为初始状态时触发，`checkedColumns`：重置后的列prop数组 |
+| `hide-columns` | `hiddenColumnsProps: Array, hiddenColumns: Array` | 开启禁止展示横向滚动条时，表格内容出现横线滚动条触发列隐藏时会发送该事件， `hiddenColumnsProps`:被隐藏的列prop属性组成的集合，`hiddenColumns`:被隐藏的列对象组成的集合|
 
 ### 8.4 拖动表头对列排序完成时对外暴露的事件
 
+| 事件名 | 参数 | 说明 |
+| --- | --- | --- |
+| `column-sort` | `allColumns: Array<Object>, sortedColumns: Array<Number|String>` | 表头拖动排序完成时触发,`allColumns`:所有列信息配置信息集合,`sortedColumns`:排序后的列信息,由列`label`信息组成 |
+
 ### 8.5 拖动行排序完成时对外暴露的事件
+
+| 事件名 | 参数 | 说明 |
+| --- | --- | --- |
+| `row-sort` | `tableData: Array, options: Object<{ direction: Enums('down','up'), behavior: Enums(0, 1, -1), from: Row, to: Row, fromIndex: Number, toIndex: Number, dragData: Row}>` | 行拖动排序完成时触发, `tableData`:排序完成后的表格数据，`options.direction`:排序方向,down表示向下拖动，`options.behavior`:排序行为，0表示同级节点间拖到，1表示子节点拖动到上级节点，节点提升，-1表示节点拖动为其它节点的子节点，节点降级，`options.from`:被拖拽的行数据，`options.to`:拖拽到的行数据，`options.fromIndex`:被拖拽的行索引，`options.toIndex`:拖拽到的行索引，`options.dragData`:拖拽的数据`|
+| `row-sort-error` | `errorMessage: String` | 行拖动排序失败时触发（如父子节点拖拽到子节点内会报错：拖拽失败，父子点不能拖拽到自己的子节点内） |
 
 ## 9 组件暴露的方法
 
@@ -908,4 +1071,3 @@ export default {
 
 ### 10.1 具名插槽-slot
 
-### 10.2 作用域插槽-scopedSlot
