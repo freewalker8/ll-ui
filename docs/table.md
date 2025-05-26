@@ -238,8 +238,8 @@ export interface Column {
   editable?: boolean; // 列是否可编辑，默认值：props.editable || false;权重大于组件属性props.editable的值
   clickEdit?: boolean; // 是否点击单元格时触发编辑，默认值：false;单元格可编辑时（editable=true）该属性可配置
   editorFormatter?: (cellValue) => any; // 单元格可编辑时，格式化单元格编辑时绑定的值，默认值：cellValue => cellValue;单元格可编辑时（editable=true）该属性可配置
-  render?: (h, scope) => VNode;
-  header?: (h, scope) => VNode;
+  render?: (h, scope) => VNode; // 单元格渲染函数，支持jsx语法
+  header?: (h, scope) => VNode; // 表头渲染函数，支持jsx语法
   children?: Column[]; // 子列
   [key: string]: any; // 其他el-table-column支持的属性，会透传给el-table-column
 }
