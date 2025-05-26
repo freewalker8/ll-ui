@@ -184,7 +184,7 @@ export default {
           clickEdit: true, // 点击单元格触发编辑
           editorFormatter: val => val, // 编辑内容格式化
           header: () => {
-            // (h, scopr) 可以通过scope获得相关信息
+            // (h, scope) 可以通过scope获得相关信息
             return (
               <div>
                 <label>角色</label>

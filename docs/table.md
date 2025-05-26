@@ -227,6 +227,24 @@ export default {
 
 #### 4.1.2 通过columns属性定义列
 
+`columns`属性接收一个数组，数组的每一项是一个`Column`对象，对象定义如下：
+
+```ts
+export interface Column { 
+  prop: string;
+  label: string;
+  order?: number; // 列排序，默认值为baseOrder + 1,baseOrder为100
+  displayWeight?: number; // 列权重，默认值：baseWeight(10000) + index(1开始)，当表格内容超出容器宽度按表格列配置的displayWeight属性的权重隐藏部分列直到不出现滚动条，优先隐藏权重小的
+  editable?: boolean; // 列是否可编辑，默认值：props.editable || false;权重大于组件属性props.editable的值
+  clickEdit?: boolean; // 是否点击单元格时触发编辑，默认值：false;单元格可编辑时（editable=true）该属性可配置
+  editorFormatter?: (cellValue) => any; // 单元格可编辑时，格式化单元格编辑时绑定的值，默认值：cellValue => cellValue;单元格可编辑时（editable=true）该属性可配置
+  render?: (h, scope) => VNode;
+  header?: (h, scope) => VNode;
+  children?: Column[]; // 子列
+  [key: string]: any; // 其他el-table-column支持的属性，会透传给el-table-column
+}
+```
+
 ```html
 <template>
   <ll-table-static :data="tableData" :columns="columns"></ll-table-static>
@@ -240,6 +258,7 @@ export default {
         { name: '张三', age: 20 },
         { name: '李四', age: 25 }
       ],
+      //  列定义, columns: Column[]
       columns: [
         { prop: 'name', label: '姓名' },
         { prop: 'age', label: '年龄' }
