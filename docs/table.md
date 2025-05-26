@@ -1056,7 +1056,7 @@ eg:
 
 | 事件名 | 参数 | 说明 |
 | --- | --- | --- |
-| `column-sort` | `allColumns: Array<Object>, sortedColumns: Array<Number|String>` | 表头拖动排序完成时触发,`allColumns`:所有列信息配置信息集合,`sortedColumns`:排序后的列信息,由列`label`信息组成 |
+| `column-sort` | `allColumns: Array<Object>, sortedColumns: Array<String>` | 表头拖动排序完成时触发,`allColumns`:所有列信息配置信息集合,`sortedColumns`:排序后的列信息,由列`label`信息组成 |
 
 ### 8.5 拖动行排序完成时对外暴露的事件
 
@@ -1067,7 +1067,29 @@ eg:
 
 ## 9 组件暴露的方法
 
+| 方法名 | 参数 | 说明 |
+| --- | --- | --- |
+| `doRequest` | `extraParams: Object, ...rest` | 手动发起数据请求。参数`extraParams`为额外查询参数，参数`rest`为附加请求参数） |
+| `reRender` | `keepStatus: Boolean` | 重新渲染表格,参数`keepStatus`为是否保留表格状态，默认值为`true` |
+| `reload` | `-` | 保留当前查询参数，重新加载表格数据（用于数据变更后刷新） |
+| `resetTable` | `-` | 重置表格状态（清除搜索条件并刷新数据，需配合自定义工具栏清空条件） |
+| `clearAllSelection` | `-` | 清除所有选中行（包括分页选中的行） |
+| `clearAllColumnFilter` | `-` | 清除列过滤条件，恢复所有列默认显示状态 |
+| `toggleRowsExpansion` | `rowKeys: Array` | 根据`row-key`集合展开或收起行，参数`rowKeys`为需要展开行的key集合 |
+| `getTableRef` | `-` | 获取组件使用的`el-table`实例 |
+| `getPaginationRef` | `-` | 获取组件使用的`el-pagination`实例 |
+
 ## 10 插槽
 
+| 插槽名 | 作用 |
+| --- | --- |
+| `default`  | 默认插槽，用于自定义表格内容 |
+| `extra` | 表格的`layout`属性配置里面需要包含`extra`该插槽才可用，用于添加额外的内容，添加位置根据`layout`属性配置的顺序而定。 |
+| `empty` | 用于自定义表格无数据时显示的占位内容 |
+| `append` | 用于在表格内容区底部添加内容 |
 ### 10.1 具名插槽-slot
 
+| 插槽名 | 参数 | 作用 |
+| --- | --- | --- |
+|`tool`| `{selection: Array, selectionData: Array, allSelection: Array, allSelectionData: Array, params: Object}` | 用于自定义工具栏的内容，表格的`layout`属性配置里面需要包含`tool`该插槽才可用。参数`selection`为当前页选中的行数据的`row-key`集合，参数`selectionData`为当前页选中的行数据集合，参数`allSelection`为全部选中行数据的`row-key`集合（开启分页选中时，若未开启分页选中则值和selection一样），参数`allSelectionData`为全部选中行数据的集合，参数`params`为表格的查询参数对象。 |
+|`pagination`| `{selection: Array, selectionData: Array, allSelection: Array, allSelectionData: Array, params: Object}` | 用于自定义分页器的内容，表格的`layout`属性配置里面需要包含`pagination`该插槽才可用。参数定义和`tool`插槽一致。 |
