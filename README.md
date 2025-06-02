@@ -1,6 +1,6 @@
 # ll-form-table
 
-基于vue2.6和element-ui的组件库，提供表单组件、表格组件。
+基于`vue2.6`和`element-ui`封装的表单、表格组件。
 
 以数据驱动视图，将表单、表格由`template`语法转换成`json`语法。通过json配置模板，快速完成表单、表格的开发。
 
