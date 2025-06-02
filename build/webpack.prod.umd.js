@@ -17,16 +17,16 @@ const pkg = require('../package.json');
 const reportFilename = resolve('../report.umd.html');
 
 const { COMP } = process.env;
-let libraryName = 'llFormTable';
+let libraryName = 'LlFormTable';
 let filename = 'll-form-table.umd.js';
 let entry = resolve('../src/packages/index.umd.js');
 
 if (COMP === 'form') {
-  libraryName = 'llForm';
+  libraryName = 'LlForm';
   filename = 'll-form.umd.js';
   entry = resolve('../src/packages/form/index.umd.js');
 } else if (COMP === 'table') {
-  libraryName = 'llTable';
+  libraryName = 'LlTable';
   filename = 'll-table.umd.js';
   entry = resolve('../src/packages/table/index.umd.js');
 }

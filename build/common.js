@@ -11,13 +11,18 @@ const externals = {
     amd: 'Vue',
     root: 'Vue'
   },
+  'element-ui': {
+    root: 'ELEMENT',
+    commonjs: 'element-ui',
+    commonjs2: 'element-ui',
+    amd: 'element-ui'
+  },
   axios: {
     commonjs: 'axios',
     commonjs2: 'axios',
     amd: 'axios',
     root: 'axios'
   },
-  'lodash-es': 'lodash-es',
   sortablejs: {
     commonjs: 'sortablejs',
     commonjs2: 'sortablejs',

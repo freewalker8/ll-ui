@@ -15,6 +15,8 @@ const sourceDir = path.resolve(__dirname, '../docs'); // 源目录
 const destDir = path.resolve(__dirname, '../dist/docs'); // 目标目录
 const packageJsonPath = path.resolve(__dirname, '../package.json'); // package.json 路径
 const distPackageJsonPath = path.resolve(__dirname, '../dist/package.json'); // dist 下的目标路径
+const externalsPath = path.resolve(__dirname, '../src/packages/externals.js'); // externals.js 路径
+const distExternalsPath = path.resolve(__dirname, '../dist/externals.js'); // dist/externals.js
 
 // 递归复制目录函数
 async function copyDirectory(src, dest) {
@@ -45,6 +47,9 @@ async function main() {
     // 复制 package.json 到 dist 目录
     console.log(`Copying package.json to dist`);
     await copyFile(packageJsonPath, distPackageJsonPath);
+    // 复制 externals.js 到 dist 目录
+    console.log(`Copying externals.js to dist`);
+    await copyFile(externalsPath, distExternalsPath);
 
     // 复制 docs 目录到 dist/docs
     console.log(`Copying docs directory to dist/docs`);

@@ -38,11 +38,20 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export {
   version,
+  install,
   // 表单导出
   LlForm,
+  addUIType,
+  addUITypes,
+  UITypes,
+  validator,
+  registerValidateType,
+  registerValidateTypes,
   // 表格导出
+  useTable,
   LlTable,
-  LlTableStatic
+  LlTableStatic,
+  setTableProps
 };
 
 export default {
