@@ -44,6 +44,9 @@ async function copyDirectory(src, dest) {
 // 主函数
 async function main() {
   try {
+    // 复制 README.md 到 dist 目录
+    console.log(`Copying README.md to dist`);
+    await copyFile(path.resolve(__dirname, '../README.md'), path.resolve(__dirname, '../dist/README.md'));
     // 复制 package.json 到 dist 目录
     console.log(`Copying package.json to dist`);
     await copyFile(packageJsonPath, distPackageJsonPath);
