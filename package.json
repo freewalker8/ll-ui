@@ -19,8 +19,10 @@
     "lint": "vue-cli-service lint",
     "fix": "vue-cli-service lint --fix",
     "clean": "rimraf dist && rimraf **/*.tgz",
-    "pack": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm pack",
-    "publish": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm publish"
+    "build": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js",
+    "pack": "npm run build && cd dist && npm pack",
+    "pre-publish": "npm publish --dry-run --registry=https://registry.npmjs.org/",
+    "pub": "npm publish --registry=https://registry.npmjs.org/"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -71,10 +73,10 @@
     "element-ui": "^2.6.3",
     "vue": "^2.6.6"
   },
-  "registry":  "https://registry.npmjs.org/",
+  "registry": "https://registry.npmjs.org/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/freewalker8/ll-form-table.git"
+    "url": "git+https://github.com/freewalker8/ll-form-table.git"
   },
   "keywords": [
     "vue2",
