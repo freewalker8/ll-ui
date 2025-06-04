@@ -53,7 +53,7 @@ Vue.use(LlFormTable);
 
 #### 表单示例
 
-[表单示例代码](https://github.com/freewalker8/ll-form-table/tree/dev/examples/demo/form/SimpleDemo.vue)
+[表单示例代码](https://github.com/freewalker8/ll-form-table/blob/dev/examples/demo/form/SimpleDemo.vue)
 
 ```html
 <template>
@@ -215,7 +215,7 @@ Vue.use(LlFormTable);
 
 示例渲染结果如下所示：
 
-![simple-form-demo](https://github.com/freewalker8/ll-form-table/tree/dev/docs/img/simple-form-demo.png)
+![simple-form-demo](https://github.com/freewalker8/ll-form-table/blob/dev/docs/img/simple-form-demo.png)
 
 #### 表格示例
 
@@ -622,8 +622,8 @@ Vue.use(LlFormTable);
 </style>
 ```
 
-[表格示例代码](https://github.com/freewalker8/ll-form-table/tree/dev/examples/demo/table/TableStatic.vue)
+[表格示例代码](https://github.com/freewalker8/ll-form-table/blob/dev/examples/demo/table/TableStatic.vue)
 
 渲染结果如下所示：
 
-![table-demo](https://github.com/freewalker8/ll-form-table/tree/dev/docs/img/table-demo.png)
+![table-demo](https://github.com/freewalker8/ll-form-table/blob/dev/docs/img/table-demo.png)
