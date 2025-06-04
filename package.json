@@ -1,8 +1,12 @@
 {
   "name": "ll-form-table",
   "version": "2.0.0",
-  "private": true,
+  "private": false,
   "main": "ll-form-table.js",
+  "description": "基于vue2.6和element-ui封装的以数据驱动视图的表单表格组件，将表单、表格由`template`语法转换成`json`语法。通过json配置模板，快速完成表单、表格的开发。",
+  "author": {
+    "name": "lianglei"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:umd": "cross-env MODE=pkg NODE_ENV=production webpack --config ./build/webpack.prod.umd.js",
@@ -66,13 +70,14 @@
     "element-ui": "^2.6.3",
     "vue": "^2.6.6"
   },
+  "registry":  "https://registry.npmjs.org/",
   "repository": {
     "type": "git",
     "url": "https://github.com/freewalker8/ll-form-table.git"
   },
   "keywords": [
-    "vue",
-    "element",
+    "vue2",
+    "element-ui",
     "table",
     "pagination",
     "form",
