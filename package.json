@@ -19,7 +19,8 @@
     "lint": "vue-cli-service lint",
     "fix": "vue-cli-service lint --fix",
     "clean": "rimraf dist && rimraf **/*.tgz",
-    "pack": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm pack"
+    "pack": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm pack",
+    "publish": "npm run clean && npm run build:commonjs && npm run build-form:commonjs && npm run build-table:commonjs && npm run build:umd && npm run build-form:umd && npm run build-table:umd && node build/copy.js && cd dist && npm publish"
   },
   "dependencies": {
     "core-js": "^3.6.5",
