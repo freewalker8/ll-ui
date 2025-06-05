@@ -1,6 +1,6 @@
 {
   "name": "ll-form-table",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "main": "ll-form-table.js",
   "description": "基于vue2.6和element-ui封装的以数据驱动视图的表单表格组件，将表单、表格由`template`语法转换成`json`语法。通过json配置模板，快速完成表单、表格的开发。",
